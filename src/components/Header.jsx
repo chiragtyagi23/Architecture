@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -14,8 +15,8 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200/80">
       <div className="max-w-[min(1600px,96vw)] mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4 min-h-14 sm:min-h-18 w-full box-border">
-        <a
-          href="/"
+        <Link
+          to="/"
           className="inline-flex flex-col items-start justify-center py-1 px-2 sm:py-1.5 sm:px-3 rounded-lg bg-[#f0ebe3] shrink-0 text-inherit no-underline shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-gray-200/60"
           aria-label="MAX Life Real Estate - Home"
         >
@@ -39,7 +40,7 @@ function Header() {
           <span className="font-sans text-[0.5rem] sm:text-[0.6rem] font-medium text-[#b8a035] leading-tight mt-0.5">
             REAL ESTATE
           </span>
-        </a>
+        </Link>
 
         {/* Desktop: central nav pill */}
         <nav className="hidden lg:flex flex-1 justify-center max-w-xl mx-2" aria-label="Main">
@@ -47,9 +48,9 @@ function Header() {
             <ul className="flex items-center gap-0.5 m-0 p-0 list-none flex-wrap">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className="inline-flex items-center py-1.5 px-3 rounded-full text-sm font-medium text-[#1a1a1a] hover:bg-white/50">
+                  <Link to={link.href} className="inline-flex items-center py-1.5 px-3 rounded-full text-sm font-medium text-[#1a1a1a] hover:bg-white/50">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -102,13 +103,13 @@ function Header() {
           <ul className="m-0 p-0 list-none flex flex-col gap-0.5">
             {navLinks.map((link) => (
               <li key={link.href}>
-                <a
-                  href={link.href}
+                <Link
+                  to={link.href}
                   className="block py-3 px-3 rounded-lg text-base font-medium text-[#1a1a1a] hover:bg-white"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
