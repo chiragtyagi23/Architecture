@@ -14,9 +14,9 @@ function UpcomingProjects() {
   const rating = 4.83;
 
   return (
-    <section className="bg-white py-24 px-6">
-      <div className="max-w-[min(1600px,96vw)] mx-auto pl-8 md:pl-12 w-full box-border">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 mb-12">
+    <section className="bg-white py-12 sm:py-16 md:py-24 px-4 sm:px-6">
+      <div className="max-w-[min(1600px,96vw)] mx-auto px-4 sm:pl-8 md:pl-12 w-full box-border">
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div>
             <p className="m-0 mb-2 text-sm font-normal text-gray-500">
               Best Project of the Years
@@ -42,7 +42,7 @@ function UpcomingProjects() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {projects.map((p, i) => (
             <article
               key={i}
