@@ -1,6 +1,31 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import house1 from '@assets/House-1.png';
+import { submitSubscribeEmail } from '../utils/web3forms';
 
 function Hero() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    setSuccess(false);
+    setLoading(true);
+    const result = await submitSubscribeEmail(email, 'Hero: Newsletter subscription');
+    setLoading(false);
+    if (result.success) {
+      setSuccess(true);
+      setEmail('');
+      toast.success('Thanks! We\'ll be in touch.');
+    } else {
+      setError(result.message || 'Something went wrong.');
+      toast.error(result.message || 'Something went wrong.');
+    }
+  }
+
   return (
     <section className="px-3 sm:px-6 py-4 pb-20 sm:pb-24 lg:pb-28 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">
       <div
@@ -24,20 +49,27 @@ function Hero() {
           </p>
           <form
             className="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full max-w-md rounded-xl overflow-hidden border border-gray-300 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             aria-label="Subscribe by email"
           >
             <input
               type="email"
-              className="w-full flex-1 min-w-0 min-h-[44px] h-11 sm:h-12 pl-4 pr-4 font-sans text-base text-black bg-white border-0 outline-none placeholder:text-gray-500 rounded-xl sm:rounded-none sm:rounded-l-xl"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className="w-full flex-1 min-w-0 min-h-[44px] h-11 sm:h-12 pl-4 pr-4 font-sans text-base text-black bg-white border-0 outline-none placeholder:text-gray-500 rounded-xl sm:rounded-none sm:rounded-l-xl disabled:opacity-70"
               placeholder="Enter your email"
               aria-label="Email address"
+              autoComplete="email"
+              required
             />
             <button
               type="submit"
-              className="w-full sm:w-auto h-11 sm:h-12 min-h-[44px] px-6 shrink-0 text-base font-medium text-white bg-gray-900 border-0 hover:bg-black rounded-xl sm:rounded-none sm:rounded-r-xl"
+              disabled={loading}
+              className="w-full cursor-pointer sm:w-auto h-11 sm:h-12 min-h-[44px] px-6 shrink-0 text-base font-medium text-white bg-gray-900 border-0 hover:bg-black rounded-xl sm:rounded-none sm:rounded-r-xl disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Subscribe
+              {loading ? 'Sending…' : 'Subscribe'}
             </button>
           </form>
         </div>

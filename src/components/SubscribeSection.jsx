@@ -1,6 +1,31 @@
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import house5 from '@assets/House-5.png';
+import { submitSubscribeEmail } from '../utils/web3forms';
 
 function SubscribeSection() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    setSuccess(false);
+    setLoading(true);
+    const result = await submitSubscribeEmail(email, 'Subscribe Now: Newsletter');
+    setLoading(false);
+    if (result.success) {
+      setSuccess(true);
+      setEmail('');
+      toast.success('Thanks! You\'re subscribed.');
+    } else {
+      setError(result.message || 'Something went wrong.');
+      toast.error(result.message || 'Something went wrong.');
+    }
+  }
+
   return (
     <section className="px-4 sm:px-6 pb-24 sm:pb-36 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">
       <div
@@ -15,24 +40,31 @@ function SubscribeSection() {
               Subscribe Now
             </h2>
             <p className="m-0 mb-4 sm:mb-5 text-sm sm:text-[0.9375rem] font-normal leading-relaxed text-black/90 text-left">
-              Lorem ipsum dolor sit amet consectetur. Feugiat ut aliquet sit pellentesque sollicitudin. Egestas faucibus lacus diam in senectus consectetur. Mattis elit adipiscing quisque tellus scelerisque vehicula ante nunc.
+              Get new listings, upcoming projects, and property tips from MAX Life Real Estate. No spam — just updates that matter to you.
             </p>
             <form
             className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full max-w-lg"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             aria-label="Subscribe by email"
           >
             <input
               type="email"
-              className="w-full flex-1 min-w-0 min-h-[44px] h-10 sm:h-10 pl-4 pr-4 font-sans text-base text-gray-900 bg-white border border-gray-200 rounded-xl outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)] placeholder:text-gray-400 sm:rounded-r-none"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className="w-full flex-1 min-w-0 min-h-[44px] h-10 sm:h-10 pl-4 pr-4 font-sans text-base text-gray-900 bg-white border border-gray-200 rounded-xl outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)] placeholder:text-gray-400 sm:rounded-r-none disabled:opacity-70"
               placeholder="Enter your email"
               aria-label="Email address"
+              autoComplete="email"
+              required
             />
             <button
               type="submit"
-              className="w-full sm:w-auto min-h-[44px] h-10 px-5 font-sans text-sm font-bold text-white bg-gray-900 border-0 rounded-xl cursor-pointer hover:bg-gray-800 shrink-0 sm:rounded-l-none"
+              disabled={loading}
+              className="w-full sm:w-auto min-h-[44px] h-10 px-5 font-sans text-sm font-bold text-white bg-gray-900 border-0 rounded-xl cursor-pointer hover:bg-gray-800 shrink-0 sm:rounded-l-none disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Subscribe
+              {loading ? 'Sending…' : 'Subscribe'}
             </button>
           </form>
           </div>
