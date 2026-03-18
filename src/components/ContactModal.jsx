@@ -273,41 +273,48 @@ function ContactModal({ isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="req-modal-title">
       <button type="button" className="absolute inset-0 bg-black/40" onClick={handleCancel} aria-label="Close modal" />
-      <div className="relative w-full max-w-4xl max-h-[90vh] flex flex-col sm:flex-row bg-white rounded-xl shadow-xl overflow-hidden">
-        <div className="w-full sm:w-[30%] min-w-0 flex flex-col bg-[#F9FAFB] border-r border-gray-200 p-6 sm:p-8">
+      <div className="relative w-full max-w-4xl flex flex-col sm:flex-row bg-white rounded-xl shadow-xl overflow-hidden min-h-0 max-sm:h-[min(90dvh,100svh-1rem)] sm:max-h-[90vh]">
+        {/* Mobile: fixed viewport height so step list scrolls in top band and form scrolls below */}
+        <div className="w-full sm:w-[30%] min-w-0 flex flex-col bg-[#F9FAFB] border-b sm:border-b-0 sm:border-r border-gray-200 p-4 sm:p-8 max-sm:max-h-[34%] max-sm:min-h-0 max-sm:shrink-0 sm:max-h-none">
           <div className="shrink-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-200 text-gray-600" aria-hidden>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-center gap-2 mb-1 sm:mb-2">
+              <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gray-200 text-gray-600 shrink-0" aria-hidden>
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </span>
-              <h2 id="req-modal-title" className="text-lg font-semibold text-gray-900 m-0">
+              <h2 id="req-modal-title" className="text-base sm:text-lg font-semibold text-gray-900 m-0 leading-tight">
                 POST YOUR REQUIREMENT
               </h2>
-              <span className="ml-auto w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-medium" title="Info">i</span>
+              <span className="ml-auto w-6 h-6 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-medium shrink-0" title="Info">i</span>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed m-0 mb-6">
+            <p className="text-xs sm:text-sm text-gray-500 leading-snug m-0 mb-2 sm:mb-6 max-sm:line-clamp-2">
               Tell us what you need — we&apos;ll match you with the right property.
             </p>
           </div>
-          <nav className="flex flex-col gap-0.5 flex-1 min-h-0 overflow-y-auto justify-center" aria-label="Form steps">
+          <nav
+            className="flex flex-col gap-0.5 flex-1 min-h-0 overflow-y-auto overscroll-contain justify-start touch-pan-y py-1 -mx-1 px-1"
+            aria-label="Form steps"
+          >
             {STEPS.map((s) => {
               const active = step === s.id;
               const done = step > s.id;
               const skipStep9 = s.id === 9 && form.secondHome === 'no';
               return (
-                <div key={s.id} className={`flex items-center gap-3 py-2.5 px-3 rounded-lg ${active ? 'bg-gray-200' : ''} ${skipStep9 ? 'opacity-50' : ''}`}>
-                  <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-gray-200 text-gray-500 shrink-0 text-xs font-medium">
+                <div
+                  key={s.id}
+                  className={`flex items-center gap-2 sm:gap-3 py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg ${active ? 'bg-gray-200' : ''} ${skipStep9 ? 'opacity-50' : ''}`}
+                >
+                  <span className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white border border-gray-200 text-gray-500 shrink-0 text-[0.65rem] sm:text-xs font-medium">
                     {done ? '✓' : s.id}
                   </span>
-                  <span className="text-sm font-medium text-gray-900 truncate">{s.label}</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-900 leading-tight max-sm:break-words">{s.label}</span>
                 </div>
               );
             })}
           </nav>
-          <div className="shrink-0 mt-4 pt-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500 m-0 mb-2">
+          <div className="shrink-0 mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-gray-200">
+            <p className="text-xs text-gray-500 m-0 mb-1 sm:mb-2">
               Step {displayStep} of {progressSteps}
             </p>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -316,7 +323,7 @@ function ContactModal({ isOpen, onClose }) {
           </div>
         </div>
 
-        <div className="flex-1 min-w-0 flex flex-col p-6 sm:p-8 overflow-auto min-h-[320px] sm:min-h-[480px]">
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col p-4 sm:p-8 sm:min-h-[480px] sm:max-h-[90vh] max-sm:overflow-hidden sm:overflow-y-auto overscroll-contain">
           <div className="flex justify-end mb-2 shrink-0">
             <button type="button" onClick={handleCancel} className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600" aria-label="Close">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,8 +333,8 @@ function ContactModal({ isOpen, onClose }) {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
-            <div className="flex-1 flex flex-col justify-center min-h-0 items-center w-full">
-              <h3 className="text-xl font-semibold text-gray-900 m-0 mb-6 w-full max-w-lg text-center">{stepMeta.label}</h3>
+            <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain pb-3 sm:pb-2 flex flex-col justify-start items-stretch sm:items-center w-full sm:pt-1">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 m-0 mb-4 sm:mb-6 w-full max-w-lg text-center px-1 shrink-0">{stepMeta.label}</h3>
 
               {step === 1 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
@@ -451,18 +458,19 @@ function ContactModal({ isOpen, onClose }) {
               )}
             </div>
 
-            <div className="shrink-0 pt-8 flex justify-end gap-3 flex-wrap">
-              <div className="flex gap-2">
+            <div className="shrink-0 w-full max-sm:border-t max-sm:border-gray-200 max-sm:bg-white max-sm:pt-3 max-sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pt-8 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:justify-end sm:gap-3">
+              {/* Mobile: Back+Cancel row, then Continue (primary at bottom); desktop: one row */}
+              <div className="flex w-full gap-2 sm:w-auto sm:flex-none max-sm:order-1">
                 {step > 1 && (
-                  <button type="button" onClick={handleBack} className="h-10 px-5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50">
+                  <button type="button" onClick={handleBack} className="h-12 sm:h-10 min-h-[3rem] sm:min-h-0 flex-1 sm:flex-none min-w-0 px-3 sm:px-5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 touch-manipulation">
                     Back
                   </button>
                 )}
-                <button type="button" onClick={handleCancel} className="h-10 px-5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50">
+                <button type="button" onClick={handleCancel} className="h-12 sm:h-10 min-h-[3rem] sm:min-h-0 flex-1 sm:flex-none min-w-0 px-3 sm:px-5 rounded-lg border border-gray-300 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 touch-manipulation">
                   Cancel
                 </button>
               </div>
-              <button type="submit" disabled={loading} className="h-10 px-5 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-70 disabled:cursor-not-allowed">
+              <button type="submit" disabled={loading} className="max-sm:order-2 h-12 sm:h-10 min-h-[3rem] sm:min-h-0 w-full sm:w-auto shrink-0 px-4 sm:px-5 rounded-lg bg-gray-900 text-white text-sm font-semibold hover:bg-gray-800 disabled:opacity-70 disabled:cursor-not-allowed touch-manipulation whitespace-normal sm:whitespace-nowrap text-center leading-snug py-2 sm:py-0">
                 {loading ? 'Sending…' : step === 9 || (step === 8 && form.secondHome === 'no') ? 'Submit requirement' : 'Continue'}
               </button>
             </div>
