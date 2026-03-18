@@ -9,8 +9,13 @@ const navLinks = [
   { href: '/listings', label: 'Listings' },
 ];
 
-function Header() {
+function Header({ onOpenContact }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  function openContact() {
+    setMenuOpen(false);
+    onOpenContact?.();
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200/80">
@@ -67,12 +72,13 @@ function Header() {
           <a href="/other-services" className="text-sm font-medium text-[#1a1a1a] hover:text-gray-600 no-underline">
             Other services
           </a>
-          <a
-            href="/contact"
-            className="inline-flex items-center justify-center py-2 px-6 text-sm font-medium text-[#1a1a1a] bg-white border border-gray-300 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-400 no-underline"
+          <button
+            type="button"
+            onClick={onOpenContact}
+            className="inline-flex items-center justify-center py-2 px-6 text-sm font-medium text-[#1a1a1a] bg-white border border-gray-300 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:bg-gray-50 hover:border-gray-400 cursor-pointer"
           >
             Contact us
-          </a>
+          </button>
         </div>
 
         {/* Mobile: menu button */}
@@ -122,13 +128,13 @@ function Header() {
             <a href="/other-services" className="py-2 px-3 text-sm font-medium text-[#1a1a1a] no-underline" onClick={() => setMenuOpen(false)}>
               Other services
             </a>
-            <a
-              href="/contact"
-              className="ml-auto inline-flex items-center justify-center py-2 px-5 text-sm font-medium text-[#1a1a1a] bg-white border border-gray-300 rounded-full no-underline"
-              onClick={() => setMenuOpen(false)}
+            <button
+              type="button"
+              onClick={openContact}
+              className="ml-auto inline-flex items-center justify-center py-2 px-5 text-sm font-medium text-[#1a1a1a] bg-white border border-gray-300 rounded-full"
             >
               Contact us
-            </a>
+            </button>
           </div>
         </nav>
       </div>
