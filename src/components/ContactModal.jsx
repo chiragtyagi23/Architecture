@@ -220,7 +220,7 @@ function ContactModal({ isOpen, onClose }) {
     }
     const encodedText = encodeURIComponent(message);
     const url = `https://wa.me/${phone}?text=${encodedText}`;
-    window.location.href = url;
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   async function handleSubmit(e) {
