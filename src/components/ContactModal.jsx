@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
+import { submitRequirementForm } from '../utils/web3forms';
 
 // const WHATSAPP_PHONE = (import.meta.env.VITE_WHATSAPP_PHONE).replace(/\D/g, '');
 const WHATSAPP_PHONE = '917210789372'.replace(/\D/g, '');
@@ -231,8 +232,15 @@ function ContactModal({ isOpen, onClose }) {
     }
     if (step === 8 && form.secondHome === 'no') {
       const payload = buildPayload({ secondHome: 'No', secondHomeOptions: [] });
-      const message = getWhatsAppMessage(payload);
-      redirectToWhatsApp(message, form.whatsapp);
+      setLoading(true);
+      const emailResult = await submitRequirementForm(payload);
+      setLoading(false);
+      if (!emailResult.success) {
+        toast.error(emailResult.message || 'Could not send your inquiry by email.');
+        return;
+      }
+      toast.success('Details sent by email. Opening WhatsApp…');
+      redirectToWhatsApp(getWhatsAppMessage(payload), form.whatsapp);
       reset();
       onClose();
       return;
@@ -251,8 +259,15 @@ function ContactModal({ isOpen, onClose }) {
         (v) => SECOND_HOME_OPTIONS.find((o) => o.value === v)?.label ?? v
       ),
     });
-    const message = getWhatsAppMessage(payload);
-    redirectToWhatsApp(message, form.whatsapp);
+    setLoading(true);
+    const emailResult = await submitRequirementForm(payload);
+    setLoading(false);
+    if (!emailResult.success) {
+      toast.error(emailResult.message || 'Could not send your inquiry by email.');
+      return;
+    }
+    toast.success('Details sent by email. Opening WhatsApp…');
+    redirectToWhatsApp(getWhatsAppMessage(payload), form.whatsapp);
     reset();
     onClose();
   }

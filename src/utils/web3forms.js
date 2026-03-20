@@ -1,12 +1,15 @@
 const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
 
+const REQUIREMENT_EMAIL_SUBJECT = 'Post Your Requirement – Magnum / MAX Life Real Estate';
+
 /**
- * Submit a subscribe email to Web3Forms.
- * @param {string} email - User email address
- * @param {string} [subject] - Optional subject (default: "Newsletter subscription")
+ * Web3Forms: subscribe OR full inquiry (when `options.message` is set).
+ * @param {string} email - User email
+ * @param {string} [subject] - Email subject
+ * @param {{ message?: string, from_name?: string }} [options] - Optional body + sender display name (requirement flow)
  * @returns {Promise<{ success: boolean, message?: string }>}
  */
-export async function submitSubscribeEmail(email, subject = 'Newsletter subscription') {
+export async function submitSubscribeEmail(email, subject = 'Newsletter subscription', options = {}) {
   const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
   if (!accessKey) {
     return { success: false, message: 'Form is not configured. Add VITE_WEB3FORMS_ACCESS_KEY to .env' };
@@ -17,16 +20,24 @@ export async function submitSubscribeEmail(email, subject = 'Newsletter subscrip
     return { success: false, message: 'Please enter your email.' };
   }
 
+  const body = {
+    access_key: accessKey,
+    email: trimmed,
+    subject,
+    from_name: options.from_name ?? 'Realstate Landing',
+  };
+
+  const customMsg = options.message != null ? String(options.message).trim() : '';
+  // Hero / Subscribe Now / Coming soon only pass email + subject; Web3Forms still needs a body for a clear inbox entry
+  body.message =
+    customMsg ||
+    `Newsletter / email signup\n\nSubject: ${subject}\nSubmitted from: MAX Life Real Estate website`;
+
   try {
     const res = await fetch(WEB3FORMS_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: accessKey,
-        email: trimmed,
-        subject,
-        from_name: 'Realstate Landing',
-      }),
+      body: JSON.stringify(body),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -35,7 +46,7 @@ export async function submitSubscribeEmail(email, subject = 'Newsletter subscrip
       return { success: false, message: data.message || 'Something went wrong. Please try again.' };
     }
     if (data.success !== true) {
-      return { success: false, message: data.message || 'Subscription failed. Please try again.' };
+      return { success: false, message: data.message || 'Something went wrong. Please try again.' };
     }
     return { success: true };
   } catch (err) {
@@ -45,54 +56,36 @@ export async function submitSubscribeEmail(email, subject = 'Newsletter subscrip
 
 /**
  * Submit Contact Us form to Web3Forms.
- * @param {{ name: string, email: string, message: string }} data
- * @returns {Promise<{ success: boolean, message?: string }>}
  */
 export async function submitContactForm({ name, email, message }) {
-  const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-  if (!accessKey) {
-    return { success: false, message: 'Form is not configured. Add VITE_WEB3FORMS_ACCESS_KEY to .env' };
-  }
   const trimmedName = (name || '').trim();
   const trimmedEmail = (email || '').trim();
   const trimmedMessage = (message || '').trim();
   if (!trimmedName) return { success: false, message: 'Please enter your name.' };
   if (!trimmedEmail) return { success: false, message: 'Please enter your email.' };
   if (!trimmedMessage) return { success: false, message: 'Please enter a message.' };
-
-  try {
-    const res = await fetch(WEB3FORMS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: 'Contact Us – MAX Life Real Estate',
-        from_name: trimmedName,
-        email: trimmedEmail,
-        message: trimmedMessage,
-      }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) return { success: false, message: data.message || 'Something went wrong. Please try again.' };
-    if (data.success !== true) return { success: false, message: data.message || 'Failed to send. Please try again.' };
-    return { success: true };
-  } catch (err) {
-    return { success: false, message: 'Network error. Please check your connection and try again.' };
-  }
+  return submitSubscribeEmail(trimmedEmail, 'Contact Us – MAX Life Real Estate', {
+    from_name: trimmedName,
+    message: trimmedMessage,
+  });
 }
 
 /**
- * Post Your Requirement – full form as email body via Web3Forms.
+ * Post Your Requirement – same pipeline as subscribe, with full body text.
  */
 export async function submitRequirementForm(data) {
-  const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-  if (!accessKey) {
-    return { success: false, message: 'Form is not configured. Add VITE_WEB3FORMS_ACCESS_KEY to .env' };
-  }
   const email = String(data.email || '').trim();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { success: false, message: 'Please enter a valid email in Your details.' };
   }
+
+  const secondHomeOpts =
+    data.secondHome === 'Yes' && Array.isArray(data.secondHomeOptions) && data.secondHomeOptions.length
+      ? data.secondHomeOptions.join(', ')
+      : String(data.secondHome || '').toLowerCase() === 'no'
+        ? 'N/A'
+        : '—';
+
   const message = [
     'POST YOUR REQUIREMENT',
     '─────────────────────',
@@ -108,26 +101,13 @@ export async function submitRequirementForm(data) {
     `Preferred location(s): ${Array.isArray(data.preferredLocations) && data.preferredLocations.length ? data.preferredLocations.join(', ') : '—'}`,
     `Possession required: ${data.possession || '—'}`,
     `Second home interest: ${data.secondHome || '—'}`,
-    `Second home options: ${Array.isArray(data.secondHomeOptions) && data.secondHomeOptions.length ? data.secondHomeOptions.join(', ') : data.secondHome === 'no' ? 'N/A' : '—'}`,
+    `Second home options: ${secondHomeOpts}`,
   ].join('\n');
 
-  try {
-    const res = await fetch(WEB3FORMS_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: accessKey,
-        subject: 'Post Your Requirement – Magnum / MAX Life Real Estate',
-        from_name: String(data.fullName || 'Requirement').slice(0, 120),
-        email,
-        message,
-      }),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok) return { success: false, message: json.message || 'Something went wrong.' };
-    if (json.success !== true) return { success: false, message: json.message || 'Failed to send.' };
-    return { success: true };
-  } catch (err) {
-    return { success: false, message: 'Network error. Please try again.' };
-  }
+  return submitSubscribeEmail(email, REQUIREMENT_EMAIL_SUBJECT, {
+    from_name: String(data.fullName || 'Requirement').slice(0, 120),
+    message,
+  });
 }
+
+export { REQUIREMENT_EMAIL_SUBJECT };
