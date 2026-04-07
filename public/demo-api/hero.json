@@ -1,0 +1,17 @@
+{
+  "eyebrow": "Welcome to Realstate",
+  "titleLine1": "Manage Your",
+  "titleLine2": "Property",
+  "description": "You'll have it all nearby — supermarkets, transit, station, the beach, and breathtaking sunsets.",
+  "image": {
+    "src": "/assets/House-1.png",
+    "alt": "Modern 3D isometric house with terraces, balconies and garden"
+  },
+  "form": {
+    "placeholder": "Enter your email",
+    "buttonIdle": "Subscribe",
+    "buttonLoading": "Sending…",
+    "sourceLabel": "Hero: Newsletter subscription"
+  }
+}
+

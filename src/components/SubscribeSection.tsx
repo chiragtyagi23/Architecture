@@ -1,0 +1,103 @@
+import { useState, type FormEvent } from 'react'
+import toast from 'react-hot-toast'
+import { submitSubscribeEmail } from '../utils/web3forms'
+import { useSiteSection } from '../lib/siteApi'
+
+function SubscribeSection() {
+  const { data, error: loadError } = useSiteSection<SubscribePayload>('VITE_SUBSCRIBE_API_URL', '/demo-api/subscribe.json')
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError('')
+    setSuccess(false)
+    setLoading(true)
+    const source = data?.form.sourceLabel ?? 'Subscribe Now: Newsletter'
+    const result = await submitSubscribeEmail(email, source)
+    setLoading(false)
+    if (result.success) {
+      setSuccess(true)
+      setEmail('')
+      toast.success("Thanks! You're subscribed.")
+    } else {
+      setError(result.message || 'Something went wrong.')
+      toast.error(result.message || 'Something went wrong.')
+    }
+  }
+
+  if (loadError) return null
+  if (!data) return null
+
+  return (
+    <section className="px-4 sm:px-6 pb-24 sm:pb-36 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">
+      <div
+        className="rounded-2xl sm:rounded-[18px] overflow-visible grid grid-cols-1 lg:grid-cols-[1fr_780px] gap-4 lg:gap-6 items-end py-5 px-4 sm:py-5 sm:px-8 lg:py-6 lg:px-12 w-full box-border shadow-[4px_4px_20px_rgba(0,0,0,0.06)]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"), linear-gradient(90deg, #b8d4e8 0%, #e8d0bc 100%)`,
+        }}
+      >
+        <div className="flex flex-col justify-center min-h-full py-4 lg:py-0">
+          <div className="max-w-xl min-w-0">
+            <h2 className="m-0 mb-2 sm:mb-3 text-[clamp(1.375rem,2.5vw,2rem)] font-bold leading-tight text-black text-left">
+              {data.title}
+            </h2>
+            <p className="m-0 mb-4 sm:mb-5 text-sm sm:text-[0.9375rem] font-normal leading-relaxed text-black/90 text-left">
+              {data.body}
+            </p>
+            <form
+            className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full max-w-lg"
+            onSubmit={handleSubmit}
+            aria-label="Subscribe by email"
+          >
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              className="w-full flex-1 min-w-0 min-h-[44px] h-10 sm:h-10 pl-4 pr-4 font-sans text-base text-gray-900 bg-white border border-gray-200 rounded-xl outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)] placeholder:text-gray-400 sm:rounded-r-none disabled:opacity-70"
+              placeholder={data.form.placeholder}
+              aria-label="Email address"
+              autoComplete="email"
+              required
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full sm:w-auto min-h-[44px] h-10 px-5 font-sans text-sm font-bold text-white bg-gray-900 border-0 rounded-xl cursor-pointer hover:bg-gray-800 shrink-0 sm:rounded-l-none disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {loading ? data.form.buttonLoading : data.form.buttonIdle}
+            </button>
+          </form>
+          </div>
+        </div>
+        <div
+          className="flex justify-end items-end w-full min-h-[280px] lg:min-h-0 overflow-visible pr-0 pl-0"
+          style={{ minWidth: 'min(100%, 780px)' }}
+        >
+          <div
+            className="w-full max-w-[400px] lg:max-w-none lg:w-[780px] lg:h-[460px] h-[260px] overflow-visible rounded-tr-3xl rounded-bl-3xl rounded-tl-md rounded-br-md lg:-mb-20 -mb-12 lg:translate-x-40 translate-x-4"
+          >
+            <img
+              src={data.image.src}
+              alt={data.image.alt}
+              className="w-full h-full object-contain object-center drop-shadow-[0_12px_32px_rgba(0,0,0,0.08)] block"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+type SubscribePayload = {
+  title: string
+  body: string
+  image: { src: string; alt: string }
+  form: { placeholder: string; buttonIdle: string; buttonLoading: string; sourceLabel: string }
+}
+
+export default SubscribeSection

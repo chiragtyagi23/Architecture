@@ -1,0 +1,15 @@
+{
+  "title": "Subscribe Now",
+  "body": "Get new listings, upcoming projects, and property tips from MAX Life Real Estate. No spam — just updates that matter to you.",
+  "image": {
+    "src": "/assets/House-5.png",
+    "alt": "3D isometric illustration of a modern white house with greenery, rooftop garden and wooden deck"
+  },
+  "form": {
+    "placeholder": "Enter your email",
+    "buttonIdle": "Subscribe",
+    "buttonLoading": "Sending…",
+    "sourceLabel": "Subscribe Now: Newsletter"
+  }
+}
+

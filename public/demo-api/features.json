@@ -1,0 +1,22 @@
+{
+  "eyebrow": "Three steps. Three minutes.",
+  "title": "Everything should be this easy.",
+  "items": [
+    {
+      "title": "Browse listings",
+      "description": "Find homes that match your lifestyle with smart filters and clear details.",
+      "icon": { "src": "/assets/messages.svg", "alt": "" }
+    },
+    {
+      "title": "Track updates",
+      "description": "Stay in the loop with instant updates, saves, and shortlists across devices.",
+      "icon": { "src": "/assets/sms-tracking.svg", "alt": "" }
+    },
+    {
+      "title": "Book a visit",
+      "description": "Schedule a tour in minutes and get support from our team whenever you need.",
+      "icon": { "src": "/assets/edit-2.svg", "alt": "" }
+    }
+  ]
+}
+

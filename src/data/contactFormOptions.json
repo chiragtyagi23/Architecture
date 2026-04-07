@@ -1,0 +1,59 @@
+{
+  "steps": [
+    { "id": 1, "label": "Are you" },
+    { "id": 2, "label": "Your details" },
+    { "id": 3, "label": "Property requirement" },
+    { "id": 4, "label": "Purpose" },
+    { "id": 5, "label": "Configuration" },
+    { "id": 6, "label": "Preferred location" },
+    { "id": 7, "label": "Possession required" },
+    { "id": 8, "label": "Second home" },
+    { "id": 9, "label": "Second home options" }
+  ],
+  "areYou": [
+    { "value": "individual", "label": "Individual" },
+    { "value": "magnum_employee", "label": "Magnum Employee" },
+    { "value": "magnum_associate", "label": "Magnum Associate" },
+    { "value": "magnum_intern", "label": "Magnum Intern" }
+  ],
+  "propertyTypes": [
+    { "value": "residential", "label": "Residential" },
+    { "value": "commercial_shop", "label": "Commercial Shop" },
+    { "value": "office_space", "label": "Office Space" }
+  ],
+  "purposes": [
+    { "value": "self_use", "label": "Self use" },
+    { "value": "investment", "label": "Investment" }
+  ],
+  "configs": [
+    { "value": "1_bhk", "label": "1 Bhk" },
+    { "value": "2_bhk", "label": "2 Bhk" },
+    { "value": "3_bhk", "label": "3 Bhk" },
+    { "value": "4_bhk", "label": "4 Bhk" },
+    { "value": "5_bhk", "label": "5 Bhk" }
+  ],
+  "locations": [
+    "Nerul",
+    "Seawoods",
+    "Palm Beach Road",
+    "Kharghar",
+    "Upper Kharghar",
+    "Amandoot metro station",
+    "Pendhar metro station",
+    "Taloja"
+  ],
+  "possession": [
+    { "value": "ready_to_move", "label": "Ready to move" },
+    { "value": "6m_1y", "label": "6 months to 1 yr" },
+    { "value": "18m_2y", "label": "18 months to 2 yrs" },
+    { "value": "2_3y", "label": "2 to 3 yrs" },
+    { "value": "3_4y", "label": "3 to 4 yrs" },
+    { "value": "4_5y", "label": "4 to 5 yrs" }
+  ],
+  "secondHomeOptions": [
+    { "value": "na_plots", "label": "N A Plots" },
+    { "value": "bungalow_pool", "label": "Bungalow with pool" },
+    { "value": "furnished_villa", "label": "Furnished Villa" },
+    { "value": "farmland", "label": "Farmland" }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "title": "A world-class real estate firm with a personalized approach.",
+  "headlineLine1": "Defined by luxury.",
+  "headlineLine2": "Delivered with care.",
+  "body": "Lorem ipsum dolor sit amet consectetur. Feugiat ut aliquet sit pellentesque sollicitudin. Egestas faucibus lacus diam in senectus consectetur. Mattis elit adipiscing quisque tellus scelerisque vehicula ante nunc. Tellus consequat nisl quis nisl justo.",
+  "primaryCta": { "label": "Book Now!", "href": "/book" },
+  "secondaryCta": { "label": "Read More", "href": "/read-more" },
+  "stats": [
+    { "value": "12+", "label": "Years" },
+    { "value": "250+", "label": "Listings" },
+    { "value": "4.9", "label": "Rating" }
+  ],
+  "image": {
+    "src": "/assets/p-img.png",
+    "alt": "Two professionals seated at a desk with a laptop; man pointing at the screen, woman smiling"
+  }
+}
+

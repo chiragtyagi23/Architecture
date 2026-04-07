@@ -1,0 +1,30 @@
+{
+  "eyebrow": "Best Project of the Years",
+  "title": "Our Upcoming Projects",
+  "cards": [
+    {
+      "slug": "project-name",
+      "title": "District 1 Villas",
+      "description": "Lorem ipsum dolor sit amet consectetur. Adipiscing imperdiet bibendum.",
+      "rating": 4.83,
+      "image": "/assets/House-2.jpg",
+      "openInNewTab": true
+    },
+    {
+      "slug": "",
+      "title": "District 2 Villas",
+      "description": "Lorem ipsum dolor sit amet consectetur. Adipiscing imperdiet bibendum.",
+      "rating": 4.83,
+      "image": "/assets/House-3.png",
+      "openInNewTab": false
+    },
+    {
+      "slug": "",
+      "title": "District 3 Villas",
+      "description": "Lorem ipsum dolor sit amet consectetur. Adipiscing imperdiet bibendum.",
+      "rating": 4.83,
+      "image": "/assets/House-4.png",
+      "openInNewTab": false
+    }
+  ]
+}
