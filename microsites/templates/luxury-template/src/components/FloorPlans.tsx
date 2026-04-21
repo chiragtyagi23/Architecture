@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { cn } from '../lib/cn'
-import { useSiteSection } from '../lib/siteApi'
 import { Reveal } from './Reveal'
 import { useTemplateBasePath, withTemplateBasePath } from '../lib/basePath'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -53,7 +53,19 @@ function resolvePlanImageSrc(
 }
 
 export function FloorPlans() {
-  const { data, error } = useSiteSection<FloorPlansPayload>('VITE_FLOORPLANS_API_URL', '/demo-api/floorplans.json')
+  const selected = useSelectedCampaign()
+  const raw = selected?.sizeFloor
+  const data: FloorPlansPayload | null = raw
+    ? {
+        sectionLabel: String(raw.sectionLabel ?? 'Size & Floor Plans'),
+        title: { before: String(raw.titleBefore ?? ''), italic: String(raw.titleItalic ?? ''), after: String(raw.titleAfter ?? '') },
+        blueprintImage: String(raw.blueprintImage ?? ''),
+        defaultTabId: String(raw.defaultTabId ?? ''),
+        tabs: Array.isArray(raw.tabs) ? raw.tabs.map((t: any) => ({ id: String(t?.id ?? ''), label: String(t?.label ?? '') })) : [],
+        panels: raw.panels ?? {},
+      }
+    : null
+  const error: string | null = null
   const basePath = useTemplateBasePath()
   const [active, setActive] = useState<string | null>(null)
   const [planRowIndex, setPlanRowIndex] = useState(0)

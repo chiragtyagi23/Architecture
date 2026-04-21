@@ -1,11 +1,16 @@
-import { useSiteSection } from '../lib/siteApi'
-
-type MarqueePayload = { items: string[] }
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 export function MarqueeStrip() {
-  const { data, error } = useSiteSection<MarqueePayload>('VITE_MARQUEE_API_URL', '/demo-api/marquee.json')
+  const selected = useSelectedCampaign()
+  const items = Array.isArray(selected?.overview?.facts)
+    ? selected.overview.facts
+        .map((f: any) => `${String(f?.key ?? '').trim()}: ${String(f?.value ?? '').trim()}`)
+        .filter((t: string) => t.length > 3)
+        .slice(0, 8)
+    : []
+  const error: string | null = null
 
-  if (error || !data?.items?.length) {
+  if (error || !items.length) {
     return error ? (
       <div className="bg-brown py-2.5">
         <div className="bg-red-50 px-6 py-2 text-center text-xs text-red-800">Marquee: {error}</div>
@@ -13,7 +18,7 @@ export function MarqueeStrip() {
     ) : null
   }
 
-  const doubled = [...data.items, ...data.items]
+  const doubled = [...items, ...items]
 
   return (
     <div className="overflow-hidden whitespace-nowrap bg-brown py-2.5">

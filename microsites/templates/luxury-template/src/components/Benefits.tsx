@@ -1,7 +1,7 @@
-import { useSiteSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
 import { ImageSlider, type ImageSlide } from './ImageSlider'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -14,7 +14,22 @@ type BenefitsPayload = {
 }
 
 export function Benefits() {
-  const { data, error } = useSiteSection<BenefitsPayload>('VITE_BENEFITS_API_URL', '/demo-api/benefits.json')
+  const selected = useSelectedCampaign()
+  const raw = selected?.benefits
+  const data: BenefitsPayload | null = raw
+    ? {
+        sectionLabel: String(raw.sectionLabel ?? 'Benefits'),
+        title: { before: String(raw.titleBefore ?? ''), italic: String(raw.titleItalic ?? ''), after: String(raw.titleAfter ?? '') },
+        items: Array.isArray(raw.items)
+          ? raw.items.map((it: any) => ({ num: String(it?.num ?? ''), title: String(it?.title ?? ''), text: String(it?.text ?? '') }))
+          : [],
+        stats: Array.isArray(raw.stats) ? raw.stats.map((s: any) => ({ value: String(s?.value ?? ''), label: String(s?.label ?? '') })) : [],
+        backgroundImages: Array.isArray(raw.backgroundImages)
+          ? raw.backgroundImages.map((img: any) => ({ src: String(img?.src ?? ''), alt: String(img?.alt ?? '') })).filter((s: any) => s.src)
+          : [],
+      }
+    : null
+  const error: string | null = null
 
   if (error) {
     return (

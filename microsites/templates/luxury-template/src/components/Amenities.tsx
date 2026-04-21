@@ -1,6 +1,6 @@
 import { KeyframeCardReveal, keyframeRevealEffectAt } from './KeyframeCardReveal'
-import { useSiteSection } from '../lib/siteApi'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -11,7 +11,20 @@ type AmenitiesPayload = {
 }
 
 export function Amenities() {
-  const { data, error } = useSiteSection<AmenitiesPayload>('VITE_AMENITIES_API_URL', '/demo-api/amenities.json')
+  const selected = useSelectedCampaign()
+  const rawItems = Array.isArray(selected?.amenities) ? selected.amenities : null
+  const data: AmenitiesPayload | null = rawItems
+    ? {
+        sectionLabel: 'Amenities',
+        title: { before: 'Lifestyle & ', italic: 'Amenities', after: '' },
+        items: rawItems.map((a: any) => ({
+          icon: String(a?.icon ?? ''),
+          name: String(a?.name ?? ''),
+          desc: String(a?.desc ?? ''),
+        })),
+      }
+    : null
+  const error: string | null = null
 
   if (error) {
     return (

@@ -1,5 +1,3 @@
-import { useSiteSection } from '../lib/siteApi'
-
 type FirmSectionPayload = {
   title: string
   headlineLine1: string
@@ -11,10 +9,23 @@ type FirmSectionPayload = {
   image: { src: string; alt: string }
 }
 
+const FIRM_SECTION: FirmSectionPayload = {
+  title: 'A better way to discover your next home',
+  headlineLine1: 'Built for clarity.',
+  headlineLine2: 'Designed for confidence.',
+  body: 'Explore projects, compare options, and reach the right team faster — with a clean experience from first click to site visit.',
+  primaryCta: { label: 'Explore projects', href: '/projects' },
+  secondaryCta: { label: 'Contact us', href: '#enquiry' },
+  stats: [
+    { value: '25+', label: 'Projects listed' },
+    { value: '10k+', label: 'Leads handled' },
+    { value: '4.8★', label: 'Customer rating' },
+  ],
+  image: { src: '/assets/p-img.png', alt: 'Our team' },
+}
+
 function FirmSection() {
-  const { data, error } = useSiteSection<FirmSectionPayload>('VITE_FIRM_SECTION_API_URL', '/demo-api/firm-section.json')
-  if (error) return null
-  if (!data) return null
+  const data = FIRM_SECTION
 
   return (
     <section className="bg-white py-12 sm:py-16 md:py-24 px-4 sm:px-6">

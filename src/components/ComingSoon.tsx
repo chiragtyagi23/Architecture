@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { submitSubscribeEmail } from '../utils/web3forms'
 
@@ -11,7 +12,7 @@ const pathToTitle: Record<string, string> = {
 }
 
 function ComingSoon() {
-  const { pathname } = useLocation()
+  const pathname = usePathname() ?? '/'
   const title = pathToTitle[pathname] || 'This page'
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -71,7 +72,7 @@ function ComingSoon() {
             </button>
           </form>
           <Link
-            to="/"
+            href="/"
             className="mt-8 inline-flex items-center justify-center py-2.5 px-5 text-sm font-medium text-[#1a1a1a] bg-white border border-gray-300 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.08)] hover:bg-gray-50 no-underline"
           >
             ← Back to Home

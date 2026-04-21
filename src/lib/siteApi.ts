@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
 export function resolveApiUrl(envKey: string, fallbackPath: string): string {
-  const v = (import.meta.env as Record<string, string | undefined>)[envKey]
+  const normalizedKey = envKey.startsWith('VITE_') ? `NEXT_PUBLIC_${envKey.slice(5)}` : envKey
+  const v = process.env[normalizedKey] ?? process.env[envKey]
   return typeof v === 'string' && v.trim().length > 0 ? v.trim() : fallbackPath
 }
 

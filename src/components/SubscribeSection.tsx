@@ -1,14 +1,23 @@
 import { useState, type FormEvent } from 'react'
 import toast from 'react-hot-toast'
 import { submitSubscribeEmail } from '../utils/web3forms'
-import { useSiteSection } from '../lib/siteApi'
 
 function SubscribeSection() {
-  const { data, error: loadError } = useSiteSection<SubscribePayload>('VITE_SUBSCRIBE_API_URL', '/demo-api/subscribe.json')
+  const data: SubscribePayload = {
+    title: 'Stay in the loop',
+    body: 'Subscribe to get updates on new listings and launches.',
+    image: { src: '/assets/House-5.png', alt: 'Newsletter' },
+    form: {
+      placeholder: 'Enter your email',
+      buttonIdle: 'Notify me',
+      buttonLoading: 'Sending…',
+      sourceLabel: 'Subscribe Now: Newsletter',
+    },
+  }
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState('')
+  const [_success, setSuccess] = useState(false)
+  const [_error, setError] = useState('')
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -27,9 +36,6 @@ function SubscribeSection() {
       toast.error(result.message || 'Something went wrong.')
     }
   }
-
-  if (loadError) return null
-  if (!data) return null
 
   return (
     <section className="px-4 sm:px-6 pb-24 sm:pb-36 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">

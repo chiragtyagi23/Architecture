@@ -14,9 +14,31 @@ const {
   secondHomeOptions: SECOND_HOME_OPTIONS,
 } = contactFormOptions;
 
-const WHATSAPP_PHONE = String(import.meta.env.VITE_WHATSAPP_PHONE ?? '').replace(/\D/g, '');
+const WHATSAPP_PHONE = String(process.env.NEXT_PUBLIC_WHATSAPP_PHONE ?? '').replace(/\D/g, '');
 
-function initialForm() {
+type Props = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+type FormState = {
+  areYou: string
+  fullName: string
+  employeeCode: string
+  associateCode: string
+  email: string
+  mobile: string
+  whatsapp: string
+  propertyType: string
+  purpose: string
+  configuration: string
+  preferredLocations: string[]
+  possession: string
+  secondHome: string
+  secondHomeOptions: string[]
+}
+
+function initialForm(): FormState {
   return {
     areYou: '',
     fullName: '',
@@ -35,10 +57,10 @@ function initialForm() {
   };
 }
 
-function ContactModal({ isOpen, onClose }) {
+function ContactModal({ isOpen, onClose }: Props) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState<FormState>(initialForm);
 
   const reset = useCallback(() => {
     setStep(1);
@@ -57,9 +79,9 @@ function ContactModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const setField = (key, value) => setForm((p) => ({ ...p, [key]: value }));
+  const setField = (key: string, value: any) => setForm((p) => ({ ...p, [key]: value }));
 
-  const toggleLocation = (loc) => {
+  const toggleLocation = (loc: string) => {
     setForm((p) => {
       const set = new Set(p.preferredLocations);
       if (set.has(loc)) set.delete(loc);
@@ -68,7 +90,7 @@ function ContactModal({ isOpen, onClose }) {
     });
   };
 
-  const toggleSecondOption = (v) => {
+  const toggleSecondOption = (v: string) => {
     setForm((p) => {
       const set = new Set(p.secondHomeOptions);
       if (set.has(v)) set.delete(v);
@@ -83,7 +105,7 @@ function ContactModal({ isOpen, onClose }) {
   const stepMeta = STEPS.find((s) => s.id === step) ?? STEPS[0];
   const progress = (displayStep / progressSteps) * 100;
 
-  function validateStep(s) {
+  function validateStep(s: number) {
     switch (s) {
       case 1:
         if (!form.areYou) return 'Please select who you are.';
@@ -123,7 +145,7 @@ function ContactModal({ isOpen, onClose }) {
     return null;
   }
 
-  function buildPayload(extra = {}) {
+  function buildPayload(extra: Record<string, any> = {}) {
     return {
       ...form,
       ...extra,
@@ -135,7 +157,7 @@ function ContactModal({ isOpen, onClose }) {
     };
   }
 
-  function getWhatsAppMessage(payload) {
+  function getWhatsAppMessage(payload: any) {
     const secondHomeOpts =
       payload.secondHome === 'Yes' && Array.isArray(payload.secondHomeOptions) && payload.secondHomeOptions.length
         ? payload.secondHomeOptions.join(', ')
@@ -160,11 +182,11 @@ function ContactModal({ isOpen, onClose }) {
     ].join('\n');
   }
 
-  function redirectToWhatsApp(message, formWhatsApp = '') {
+  function redirectToWhatsApp(message: string, formWhatsApp = '') {
     const formPhone = (formWhatsApp || '').replace(/\D/g, '');
     const phone = WHATSAPP_PHONE || formPhone;
     if (!phone) {
-      toast.error('Add your WhatsApp number in .env (VITE_WHATSAPP_PHONE) or fill the WhatsApp field in the form.');
+      toast.error('Add your WhatsApp number in .env (NEXT_PUBLIC_WHATSAPP_PHONE) or fill the WhatsApp field in the form.');
       return;
     }
     const encodedText = encodeURIComponent(message);
@@ -172,7 +194,7 @@ function ContactModal({ isOpen, onClose }) {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const err = validateStep(step);
     if (err) {

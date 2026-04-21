@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 
-import { campaignsReducer } from './campaignsSlice.ts'
+import { campaignsReducer } from './campaignsSlice'
 
 export const store = configureStore({
   reducer: {

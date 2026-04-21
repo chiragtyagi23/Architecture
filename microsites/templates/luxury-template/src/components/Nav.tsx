@@ -1,8 +1,8 @@
 import { type MouseEvent, useEffect, useState } from 'react'
-import { scrollToSection, useSiteSection } from '../lib/siteApi'
+import { scrollToSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
 import { Reveal } from './Reveal'
-import { useTemplateBasePath } from '../lib/basePath'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type NavPayload = {
   logo: { textMain: string; textSecondary: string }
@@ -15,9 +15,25 @@ type NavProps = {
 }
 
 export function Nav({ suppressLogo = false }: NavProps) {
-  const { data, error } = useSiteSection<NavPayload>('VITE_NAV_API_URL', '/demo-api/nav.json')
+  const selected = useSelectedCampaign()
+  const data: NavPayload = {
+    logo: {
+      textMain: String(selected?.title ?? 'Project').split(' ')[0] || 'Project',
+      textSecondary: String(selected?.title ?? 'Name').split(' ').slice(1).join(' ') || 'Name',
+    },
+    menuItems: [
+      { label: 'Overview', link: '#overview' },
+      { label: 'Gallery', link: '#gallery' },
+      { label: 'Residences', link: '#residences' },
+      { label: 'Amenities', link: '#amenities' },
+      { label: 'Highlights', link: '#highlights' },
+      { label: 'Benefits', link: '#benefits' },
+      { label: 'Location', link: '#location' },
+      { label: 'Enquiry', link: '#enquiry' },
+    ],
+    cta: { label: 'Enquire', link: '#enquiry' },
+  }
   const [menuOpen, setMenuOpen] = useState(false)
-  const basePath = useTemplateBasePath()
 
   useEffect(() => {
     if (!menuOpen) return
@@ -54,38 +70,6 @@ export function Nav({ suppressLogo = false }: NavProps) {
     setMenuOpen(false)
   }
 
-  if (error) {
-    return (
-      <div className="fixed top-0 right-0 left-0 z-[300] bg-red-50 px-6 py-3 text-center text-xs text-red-800">
-        Navigation: {error}
-      </div>
-    )
-  }
-
-  if (!data) {
-    return (
-      <nav
-        className="fixed top-0 right-0 left-0 z-50 flex flex-col items-stretch border-b border-border bg-cream/95 p-0 backdrop-blur-md"
-        aria-busy="true"
-      >
-        <div className="relative z-[3] grid min-h-[4.75rem] grid-cols-[1fr_auto] items-center gap-x-4 px-5 py-3.5 min-[961px]:grid-cols-[1fr_auto_1fr] min-[961px]:gap-x-6 min-[961px]:px-14 min-[961px]:py-4">
-          <a
-            href={`${basePath || ''}/`}
-            className={cn(
-              'justify-self-start font-display text-xl font-medium tracking-[0.04em] text-dark no-underline transition-opacity duration-[520ms] [transition-timing-function:cubic-bezier(0.25,0.46,0.45,0.94)]',
-              suppressLogo && 'pointer-events-none opacity-0',
-            )}
-            onClick={(e) => e.preventDefault()}
-            tabIndex={suppressLogo ? -1 : undefined}
-            aria-hidden={suppressLogo}
-          >
-            <span>Project</span>
-            <span className="text-bl"> Name</span>
-          </a>
-        </div>
-      </nav>
-    )
-  }
 
   return (
     <nav
@@ -108,7 +92,7 @@ export function Nav({ suppressLogo = false }: NavProps) {
       <div className="relative z-[3] grid min-h-[4.75rem] grid-cols-[1fr_auto] items-center gap-x-4 px-5 py-3.5 min-[961px]:auto-rows-min min-[961px]:min-h-0 min-[961px]:grid-cols-[1fr_auto_1fr] min-[961px]:gap-x-6 min-[961px]:px-14 min-[961px]:py-4">
         <Reveal effect="fade" delay={0} rootMargin="0px 0px 0px 0px" className="justify-self-start min-[961px]:col-span-1">
           <a
-            href={`${basePath || ''}/`}
+            href="/"
             className={cn(
               'nav-logo cursor-pointer justify-self-start font-display text-xl font-medium tracking-[0.04em] text-dark no-underline transition-opacity duration-[520ms] [transition-timing-function:cubic-bezier(0.25,0.46,0.45,0.94)]',
               suppressLogo && 'pointer-events-none opacity-0',

@@ -15,6 +15,7 @@ import { Enquiry } from './components/Enquiry'
 import { EnquiryPopup } from './components/EnquiryPopup'
 import { SiteFooter } from './components/SiteFooter'
 import { IntroSplash } from './components/IntroSplash'
+import { SelectedCampaignProvider } from './lib/selectedCampaign'
 
 const INTRO_SESSION_KEY = 'mg_site_intro_v1'
 
@@ -56,7 +57,7 @@ function App({ selected }: MicrositeAppProps) {
   }, [])
 
   return (
-    <>
+    <SelectedCampaignProvider selected={selected}>
       <EnquiryPopup scheduleWhenReady={enquiryGateOpen} openDelayMs={enquiryPopupDelayMs} />
       {showIntro ? (
         <IntroSplash
@@ -78,7 +79,7 @@ function App({ selected }: MicrositeAppProps) {
       <LocationMap />
       <Enquiry />
       <SiteFooter />
-    </>
+    </SelectedCampaignProvider>
   )
 }
 

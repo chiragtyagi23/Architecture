@@ -1,7 +1,7 @@
 import { type FormEvent } from 'react'
 import { cn } from '../lib/cn'
-import { useSiteSection } from '../lib/siteApi'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 export type TitleParts = { before: string; italic: string; after: string }
 
@@ -38,7 +38,58 @@ const controlCls =
   'w-full border border-beige bg-cream px-4 py-3.5 font-sans text-sm text-dark transition-colors outline-none focus:border-brown'
 
 export function Enquiry() {
-  const { data, error } = useSiteSection<EnquiryPayload>('VITE_ENQUIRY_API_URL', '/demo-api/enquiry.json')
+  const selected = useSelectedCampaign()
+  const facts = Array.isArray(selected?.overview?.facts) ? selected.overview.facts : []
+  const email = facts.find((f: any) => String(f?.key ?? '').toLowerCase() === 'email')?.value
+  const mobile = facts.find((f: any) => String(f?.key ?? '').toLowerCase() === 'mobile')?.value
+  const regNo = String(selected?.regNo ?? '')
+
+  const data: EnquiryPayload = {
+    left: {
+      sectionLabel: 'Enquiry',
+      title: { before: 'Register your ', italic: 'Interest', after: '' },
+      lead: 'Share your details and we will contact you shortly.',
+      contacts: [
+        ...(email ? [{ icon: '✉', text: String(email) }] : []),
+        ...(mobile ? [{ icon: '☎', text: String(mobile) }] : []),
+        ...(regNo ? [{ icon: 'ⓘ', text: `RERA: ${regNo}` }] : []),
+      ],
+    },
+    right: {
+      formTitle: 'Enquire now',
+      formSub: 'Submit your details for a call back.',
+      nameField: { label: 'Full name', placeholder: 'Your name', id: 'enq-name', name: 'name' },
+      phoneField: { label: 'Phone', placeholder: 'Your phone number', id: 'enq-phone', name: 'phone' },
+      bhkField: {
+        label: 'BHK',
+        id: 'enq-bhk',
+        name: 'bhk',
+        options: [
+          { value: '', label: 'Select' },
+          { value: '1', label: '1 BHK' },
+          { value: '2', label: '2 BHK' },
+          { value: '3', label: '3 BHK' },
+          { value: '4', label: '4 BHK' },
+        ],
+      },
+      budgetField: {
+        label: 'Budget',
+        id: 'enq-budget',
+        name: 'budget',
+        options: [
+          { value: '', label: 'Select' },
+          { value: 'under_50', label: 'Under 50L' },
+          { value: '50_100', label: '50L – 1Cr' },
+          { value: '100_150', label: '1Cr – 1.5Cr' },
+          { value: '150_plus', label: '1.5Cr+' },
+        ],
+      },
+      submitLabel: 'Submit',
+      disclaimerLine1: 'By submitting, you agree to be contacted.',
+      disclaimerLine2: 'We respect your privacy.',
+    },
+  }
+  const error: string | null = null
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -51,10 +102,6 @@ export function Enquiry() {
         <div className="bg-red-50 px-6 py-3 text-center text-xs text-red-800 text-dark">Enquiry: {error}</div>
       </section>
     )
-  }
-
-  if (!data) {
-    return <section id="enquiry" className="min-h-[400px]" aria-busy="true" />
   }
 
   const L = data.left

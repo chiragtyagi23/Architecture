@@ -1,6 +1,6 @@
-import { useSiteSection } from '../lib/siteApi'
 import { Reveal } from './Reveal'
 import { KeyframeCardReveal, keyframeRevealEffectAt } from './KeyframeCardReveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -15,7 +15,21 @@ type HighlightsPayload = {
 }
 
 export function Highlights() {
-  const { data, error } = useSiteSection<HighlightsPayload>('VITE_HIGHLIGHTS_API_URL', '/demo-api/highlights.json')
+  const selected = useSelectedCampaign()
+  const rawItems = Array.isArray(selected?.highlights) ? selected.highlights : null
+  const data: HighlightsPayload | null = rawItems
+    ? {
+        sectionLabel: 'Highlights',
+        title: { before: 'Project ', italic: 'Highlights', after: '' },
+        items: rawItems.map((h: any) => ({
+          num: String(h?.num ?? ''),
+          icon: h?.icon != null ? String(h.icon) : undefined,
+          title: String(h?.title ?? ''),
+          text: h?.text != null ? String(h.text) : undefined,
+        })),
+      }
+    : null
+  const error: string | null = null
 
   if (error) {
     return (

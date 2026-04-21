@@ -1,17 +1,18 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useSiteSection } from '../lib/siteApi'
+import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchCampaignById, fetchCampaigns } from '../store/campaignsSlice'
 
 function UpcomingProjects() {
-  const { data, error } = useSiteSection<UpcomingProjectsPayload>(
-    'VITE_UPCOMING_PROJECTS_API_URL',
-    '/demo-api/upcoming-projects.json',
-  )
+  const data: UpcomingProjectsPayload = {
+    eyebrow: 'UPCOMING PROJECTS',
+    title: 'Explore what’s launching soon',
+    cards: [],
+  }
+  const error: string | null = null
 
   const dispatch = useAppDispatch()
-  const navigate = useNavigate()
+  const router = useRouter()
   // NOTE: some setups type `useSelector` state as `unknown`; this cast keeps it beginner-friendly.
   const campaigns = useAppSelector((s) => (s as any).campaigns.items)
   const loading = useAppSelector((s) => (s as any).campaigns.loading)
@@ -95,7 +96,7 @@ function UpcomingProjects() {
                 type="button"
                 onClick={() => {
                   // 1) open template route with this id
-                  navigate(`/project-name/${row.id}?template=${encodeURIComponent(templateKey)}`)
+                  router.push(`/project-name/${row.id}?template=${encodeURIComponent(templateKey)}`)
                   // 2) also fetch details (template page will fetch too)
                   dispatch(fetchCampaignById(row.id))
                 }}

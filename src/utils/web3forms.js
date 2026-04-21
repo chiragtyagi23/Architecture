@@ -10,9 +10,9 @@ const REQUIREMENT_EMAIL_SUBJECT = 'Post Your Requirement – Magnum / MAX Life R
  * @returns {Promise<{ success: boolean, message?: string }>}
  */
 export async function submitSubscribeEmail(email, subject = 'Newsletter subscription', options = {}) {
-  const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+  const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
   if (!accessKey) {
-    return { success: false, message: 'Form is not configured. Add VITE_WEB3FORMS_ACCESS_KEY to .env' };
+    return { success: false, message: 'Form is not configured. Add NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY to .env' };
   }
 
   const trimmed = (email || '').trim();
@@ -49,7 +49,7 @@ export async function submitSubscribeEmail(email, subject = 'Newsletter subscrip
       return { success: false, message: data.message || 'Something went wrong. Please try again.' };
     }
     return { success: true };
-  } catch (err) {
+  } catch {
     return { success: false, message: 'Network error. Please check your connection and try again.' };
   }
 }

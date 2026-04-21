@@ -1,7 +1,7 @@
-import { useSiteSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
 import type { ImageSlide } from './ImageSlider'
 import { WipeImageCarousel } from './WipeImageCarousel'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 const MAX_HERO_IMAGES = 5
 
@@ -26,7 +26,9 @@ type HeroProps = {
 
 export function Hero({ entranceReady: _entranceReady = true }: HeroProps) {
   void _entranceReady
-  const { data, error } = useSiteSection<HeroPayload>('VITE_HERO_API_URL', '/demo-api/hero.json')
+  const selected = useSelectedCampaign()
+  const data: HeroPayload | null = (selected?.hero?.data as HeroPayload | undefined) ?? null
+  const error: string | null = null
 
   if (error) {
     return (

@@ -1,6 +1,6 @@
-import { useSiteSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -14,7 +14,29 @@ type OverviewPayload = {
 }
 
 export function Overview() {
-  const { data, error } = useSiteSection<OverviewPayload>('VITE_OVERVIEW_API_URL', '/demo-api/overview.json')
+  const selected = useSelectedCampaign()
+  const raw = selected?.overview
+  const data: OverviewPayload | null = raw
+    ? {
+        sectionLabel: String(raw.sectionLabel ?? 'Project Overview'),
+        title: {
+          before: String(raw.titleBefore ?? ''),
+          italic: String(raw.titleItalic ?? ''),
+          after: String(raw.titleAfter ?? ''),
+        },
+        body: String(raw.body ?? ''),
+        facts: Array.isArray(raw.facts)
+          ? raw.facts.map((f: any) => ({ key: String(f?.key ?? ''), value: String(f?.value ?? '') })).filter((f: any) => f.key && f.value)
+          : [],
+        certificationsTitle: String(raw.certificationsTitle ?? 'Project Certifications & Registration'),
+        certifications: Array.isArray(raw.certifications)
+          ? raw.certifications
+              .map((c: any) => ({ label: String(c?.label ?? ''), value: String(c?.value ?? ''), tone: c?.tone }))
+              .filter((c: any) => c.label && c.value)
+          : [],
+      }
+    : null
+  const error: string | null = null
 
   if (error) {
     return (

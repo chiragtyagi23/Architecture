@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { useSiteSection } from '../lib/siteApi'
 import { Reveal } from './Reveal'
 
 type DocumentItem = { url: string; type: string }
@@ -104,26 +103,14 @@ export function Videos({ selected }: { selected: any }) {
     return items
   }, [docs, media])
 
-  const { data, error } = useSiteSection<VideosPayload>('VITE_VIDEOS_API_URL', '/demo-api/videos.json')
-
   const items = fromCampaign.length
     ? fromCampaign
-    : Array.isArray(data?.items)
-      ? data!.items.filter((i) => (i?.url ?? '').trim().length > 0)
       : []
-
-  if (error) {
-    return (
-      <section className="bg-beige px-6 py-16 min-[961px]:px-12 min-[961px]:py-20" id="videos">
-        <div className="bg-red-50 px-6 py-3 text-center text-xs text-red-800">Videos: {error}</div>
-      </section>
-    )
-  }
 
   if (!items.length) return null
 
-  const sectionLabel = data?.sectionLabel ?? 'VIDEOS'
-  const title = data?.title ?? { before: 'Watch the ', italic: 'Project', after: '' }
+  const sectionLabel = 'VIDEOS'
+  const title = { before: 'Watch the ', italic: 'Project', after: '' }
 
   return (
     <section className="bg-beige px-6 py-16 min-[961px]:px-12 min-[961px]:py-20" id="videos">

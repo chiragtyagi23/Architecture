@@ -1,8 +1,9 @@
 import { type CSSProperties, type FormEvent, useEffect, useId, useRef, useState } from 'react'
 import { cn } from '../lib/cn'
-import { scrollToSection, useSiteSection } from '../lib/siteApi'
+import { scrollToSection } from '../lib/siteApi'
 import type { EnquiryPayload } from './Enquiry'
 import { useTemplateBasePath, withTemplateBasePath } from '../lib/basePath'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 const POPUP_DISMISSED_KEY = 'mg_enquiry_popup_dismissed_v1'
 const DEFAULT_POPUP_DELAY_MS = 10_000
@@ -25,7 +26,59 @@ export function EnquiryPopup(p: Props) {
   const [open, setOpen] = useState(false)
   const basePath = useTemplateBasePath()
   const [delayElapsed, setDelayElapsed] = useState(false)
-  const { data, error } = useSiteSection<EnquiryPayload>('VITE_ENQUIRY_API_URL', '/demo-api/enquiry.json')
+  const selected = useSelectedCampaign()
+  const facts = Array.isArray(selected?.overview?.facts) ? selected.overview.facts : []
+  const email = facts.find((f: any) => String(f?.key ?? '').toLowerCase() === 'email')?.value
+  const mobile = facts.find((f: any) => String(f?.key ?? '').toLowerCase() === 'mobile')?.value
+  const regNo = String(selected?.regNo ?? '')
+
+  const data: EnquiryPayload = {
+    popup: { title: 'Enquire now', subtitle: 'Submit your details for a call back.' },
+    left: {
+      sectionLabel: 'Enquiry',
+      title: { before: 'Register your ', italic: 'Interest', after: '' },
+      lead: 'Share your details and we will contact you shortly.',
+      contacts: [
+        ...(email ? [{ icon: '✉', text: String(email) }] : []),
+        ...(mobile ? [{ icon: '☎', text: String(mobile) }] : []),
+        ...(regNo ? [{ icon: 'ⓘ', text: `RERA: ${regNo}` }] : []),
+      ],
+    },
+    right: {
+      formTitle: 'Enquire now',
+      formSub: 'Submit your details for a call back.',
+      nameField: { label: 'Full name', placeholder: 'Your name', id: 'enq-name', name: 'name' },
+      phoneField: { label: 'Phone', placeholder: 'Your phone number', id: 'enq-phone', name: 'phone' },
+      bhkField: {
+        label: 'BHK',
+        id: 'enq-bhk',
+        name: 'bhk',
+        options: [
+          { value: '', label: 'Select' },
+          { value: '1', label: '1 BHK' },
+          { value: '2', label: '2 BHK' },
+          { value: '3', label: '3 BHK' },
+          { value: '4', label: '4 BHK' },
+        ],
+      },
+      budgetField: {
+        label: 'Budget',
+        id: 'enq-budget',
+        name: 'budget',
+        options: [
+          { value: '', label: 'Select' },
+          { value: 'under_50', label: 'Under 50L' },
+          { value: '50_100', label: '50L – 1Cr' },
+          { value: '100_150', label: '1Cr – 1.5Cr' },
+          { value: '150_plus', label: '1.5Cr+' },
+        ],
+      },
+      submitLabel: 'Submit',
+      disclaimerLine1: 'By submitting, you agree to be contacted.',
+      disclaimerLine2: 'We respect your privacy.',
+    },
+  }
+  const error: string | null = null
 
   useEffect(() => {
     if (!scheduleWhenReady) {

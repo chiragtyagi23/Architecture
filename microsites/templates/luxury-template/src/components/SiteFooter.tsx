@@ -1,5 +1,5 @@
-import { useSiteSection } from '../lib/siteApi'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type FooterPayload = {
   brand: { before: string; accent: string }
@@ -10,7 +10,17 @@ type FooterPayload = {
 }
 
 export function SiteFooter() {
-  const { data, error } = useSiteSection<FooterPayload>('VITE_FOOTER_API_URL', '/demo-api/footer.json')
+  const selected = useSelectedCampaign()
+  const regNo = String(selected?.regNo ?? '')
+  const title = String(selected?.title ?? 'Project')
+  const data: FooterPayload = {
+    brand: { before: title.split(' ')[0] || title, accent: title.split(' ').slice(1).join(' ') || '' },
+    copyright: `© ${new Date().getFullYear()} ${title}. All rights reserved.`,
+    reraLine1: 'MahaRERA No. ',
+    reraNumber: regNo,
+    reraLine2: 'Details available on the MahaRERA website.',
+  }
+  const error: string | null = null
 
   if (error) {
     return (
@@ -18,10 +28,6 @@ export function SiteFooter() {
         <div className="bg-red-50 px-6 py-3 text-center text-xs text-red-800">Footer: {error}</div>
       </footer>
     )
-  }
-
-  if (!data) {
-    return <footer className="min-h-20 bg-dark" aria-busy="true" />
   }
 
   return (

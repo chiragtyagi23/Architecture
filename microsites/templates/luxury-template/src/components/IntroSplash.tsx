@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { cn } from '../lib/cn'
 import { useTemplateBasePath, withTemplateBasePath } from '../lib/basePath'
-import { scrollToSection, useSiteSection } from '../lib/siteApi'
+import { scrollToSection } from '../lib/siteApi'
 import type { ImageSlide } from './ImageSlider'
 import { WipeImageCarousel } from './WipeImageCarousel'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 /** First N slides are image-only; snapshot + enquiry gate follow slide N. */
 const IMMERSIVE_SLIDE_COUNT = 3
@@ -38,7 +39,9 @@ function readReducedMotion(): boolean {
 }
 
 export function IntroSplash({ onComplete, onNavReveal, onEnquiryGateOpen }: Props) {
-  const { data, error } = useSiteSection<HeroIntroPayload>('VITE_HERO_API_URL', '/demo-api/hero.json')
+  const selected = useSelectedCampaign()
+  const data: HeroIntroPayload | null = (selected?.hero?.data as HeroIntroPayload | undefined) ?? null
+  const error: string | null = null
   const basePath = useTemplateBasePath()
   const [reduceMotion] = useState(readReducedMotion)
   const [phase, setPhase] = useState<Phase>('immersive')

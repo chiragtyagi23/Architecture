@@ -1,8 +1,8 @@
-import { useSiteSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
 import { ImageSlider, type ImageSlide } from './ImageSlider'
 import { KeyframeCardReveal, keyframeRevealEffectAt } from './KeyframeCardReveal'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -33,7 +33,23 @@ function slidesForCell(cell: GalleryCell): ImageSlide[] {
 }
 
 export function Gallery() {
-  const { data, error } = useSiteSection<GalleryPayload>('VITE_GALLERY_API_URL', '/demo-api/gallery.json')
+  const selected = useSelectedCampaign()
+  const rawCells = Array.isArray(selected?.projectImages) ? selected.projectImages : null
+  const data: GalleryPayload | null = rawCells
+    ? {
+        sectionLabel: 'Gallery',
+        title: { before: 'Explore the ', italic: 'Gallery', after: '' },
+        cells: rawCells.map((c: any) => ({
+          tag: String(c?.tag ?? ''),
+          feature: Boolean(c?.feature),
+          wideBottom: Boolean(c?.wideBottom),
+          images: Array.isArray(c?.images)
+            ? c.images.map((img: any) => ({ src: String(img?.src ?? ''), alt: String(img?.alt ?? '') })).filter((s: any) => s.src)
+            : [],
+        })),
+      }
+    : null
+  const error: string | null = null
 
   if (error) {
     return (

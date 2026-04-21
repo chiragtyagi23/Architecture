@@ -1,14 +1,25 @@
 import { useState, type FormEvent } from 'react'
 import toast from 'react-hot-toast'
 import { submitSubscribeEmail } from '../utils/web3forms'
-import { useSiteSection } from '../lib/siteApi'
 
 function Hero() {
-  const { data, error: loadError } = useSiteSection<HeroPayload>('VITE_HERO_API_URL', '/demo-api/hero.json')
+  const data: HeroPayload = {
+    eyebrow: 'MAX Life Real Estate',
+    titleLine1: 'Find your next',
+    titleLine2: 'Property',
+    description: 'Browse curated projects and get connected for a site visit.',
+    image: { src: '/assets/House-1.png', alt: 'Property illustration' },
+    form: {
+      placeholder: 'Enter your email',
+      buttonIdle: 'Subscribe',
+      buttonLoading: 'Sending…',
+      sourceLabel: 'Hero: Newsletter subscription',
+    },
+  }
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState('')
+  const [_success, setSuccess] = useState(false)
+  const [_error, setError] = useState('')
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -27,9 +38,6 @@ function Hero() {
       toast.error(result.message || 'Something went wrong.')
     }
   }
-
-  if (loadError) return null
-  if (!data) return null
 
   return (
     <section className="px-3 sm:px-6 py-4 pb-20 sm:pb-24 lg:pb-28 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">

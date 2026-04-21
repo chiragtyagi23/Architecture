@@ -20,8 +20,7 @@ export type CampaignFull = {
 } & Record<string, unknown>
 
 function apiBase() {
-  // keep it simple; later you can move to .env
-  return 'http://localhost:4000'
+  return String(process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:4000').replace(/\/+$/, '')
 }
 
 export const fetchCampaigns = createAsyncThunk('campaigns/fetchCampaigns', async () => {

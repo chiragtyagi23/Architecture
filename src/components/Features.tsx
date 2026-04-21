@@ -1,15 +1,33 @@
-import { useSiteSection } from '../lib/siteApi'
-
 type FeaturesPayload = {
   eyebrow: string
   title: string
   items: { title: string; description: string; icon: { src: string; alt?: string } }[]
 }
 
+const FEATURES: FeaturesPayload = {
+  eyebrow: 'WHY CHOOSE US',
+  title: 'Everything you need to find the right property',
+  items: [
+    {
+      title: 'Verified listings',
+      description: 'Curated inventory with key details and clear next steps.',
+      icon: { src: '/assets/messages.svg', alt: 'Verified' },
+    },
+    {
+      title: 'Transparent pricing',
+      description: 'Compare configurations and pricing without hidden surprises.',
+      icon: { src: '/assets/edit-2.svg', alt: 'Pricing' },
+    },
+    {
+      title: 'Expert guidance',
+      description: 'Get help from our team for site visits, documents, and closures.',
+      icon: { src: '/assets/sms-tracking.svg', alt: 'Support' },
+    },
+  ],
+}
+
 function Features() {
-  const { data, error } = useSiteSection<FeaturesPayload>('VITE_FEATURES_API_URL', '/demo-api/features.json')
-  if (error) return null
-  if (!data) return null
+  const data = FEATURES
 
   return (
     <section className="bg-white py-12 sm:py-16 md:py-24 px-4 sm:px-6">

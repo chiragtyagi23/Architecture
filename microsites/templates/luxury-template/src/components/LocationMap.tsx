@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { useSiteSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
 import { Reveal } from './Reveal'
+import { useSelectedCampaign } from '../lib/selectedCampaign'
 
 type TitleParts = { before: string; italic: string; after: string }
 
@@ -37,7 +37,9 @@ function formatMins(minutes: string): string {
 }
 
 export function LocationMap() {
-  const { data, error } = useSiteSection<LocationPayload>('VITE_LOCATION_API_URL', '/demo-api/location.json')
+  const selected = useSelectedCampaign()
+  const groups = Array.isArray(selected?.socialInfraGroups) ? selected.socialInfraGroups : []
+  const error: string | null = null
   const [openId, setOpenId] = useState<'transport' | 'education' | 'conveniences' | null>('transport')
 
   const subTitle = 'mb-2.5 mt-6 font-sans text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-brown first:mt-0'
@@ -46,103 +48,29 @@ export function LocationMap() {
     'relative pl-4 text-[0.88rem] leading-relaxed text-[#3d3832] before:absolute before:left-0 before:text-brown before:content-["–"]'
 
   // Important: keep hook order stable even while data is loading.
-  const cards = useMemo(() => {
-    if (!data) return [] as const
+  const cards = useMemo((): { id: 'transport' | 'education' | 'conveniences'; title: string; preview: string[]; content: React.ReactNode }[] => {
+    if (!groups.length) return [] as const
 
-    const transportation = data.transportation ?? { title: 'Transportation', lines: [] }
-    const education = data.education ?? {
-      title: 'Nearby Educational institutes',
-      schools: { title: 'Schools', places: [] },
-      colleges: { title: 'Colleges', places: [] },
-    }
-    const conveniences = data.conveniences ?? {
-      title: 'Nearby Conveniences',
-      hospitals: { title: 'Hospitals', places: [] },
-      shoppingMalls: { title: 'Shopping malls', places: [] },
-    }
+    const mapped = groups.slice(0, 3).map((g: any, idx: number) => {
+      const id: 'transport' | 'education' | 'conveniences' = idx === 0 ? 'transport' : idx === 1 ? 'education' : 'conveniences'
+      const title = String(g?.title ?? '')
+      const items = Array.isArray(g?.items) ? g.items : []
+      const preview = items.slice(0, 2).map((p: any) => `${String(p?.name ?? '')} · ${formatMins(String(p?.value ?? ''))}`)
+      const content = (
+        <ul className={listCls}>
+          {items.map((row: any, i: number) => (
+            <li key={`${id}-${i}`} className={lineCls}>
+              <span className="font-medium text-[#322c26]">{String(row?.name ?? '')}</span>
+              <span className="text-brown"> - {formatMins(String(row?.value ?? ''))}</span>
+            </li>
+          ))}
+        </ul>
+      )
+      return { id, title, preview, content }
+    })
 
-    return [
-      {
-        id: 'transport' as const,
-        title: transportation.title,
-        preview: (transportation.lines ?? []).slice(0, 2).map((r) => `${r.label} · ${formatMins(r.minutes)}`),
-        content: (
-          <ul className={listCls}>
-            {(transportation.lines ?? []).map((row, i) => (
-              <li key={`t-${i}`} className={lineCls}>
-                <span className="font-medium text-[#322c26]">{row.label}</span>
-                <span className="text-brown"> - {formatMins(row.minutes)}</span>
-              </li>
-            ))}
-          </ul>
-        ),
-      },
-      {
-        id: 'education' as const,
-        title: education.title,
-        preview: [
-          ...((education.schools.places ?? []).slice(0, 1).map((p) => `${p.name} · ${formatMins(p.minutes)}`)),
-          ...((education.colleges.places ?? []).slice(0, 1).map((p) => `${p.name} · ${formatMins(p.minutes)}`)),
-        ],
-        content: (
-          <>
-            <p className={subTitle}>{education.schools.title}</p>
-            <ul className={cn(listCls, 'mb-6')}>
-              {(education.schools.places ?? []).map((p, i) => (
-                <li key={`school-${i}`} className={lineCls}>
-                  <span className="font-medium text-[#322c26]">{p.name}</span>
-                  <span className="text-brown"> - {formatMins(p.minutes)}</span>
-                </li>
-              ))}
-            </ul>
-            <p className={subTitle}>{education.colleges.title}</p>
-            <ul className={listCls}>
-              {(education.colleges.places ?? []).map((p, i) => (
-                <li key={`college-${i}`} className={lineCls}>
-                  <span className="font-medium text-[#322c26]">{p.name}</span>
-                  <span className="text-brown"> - {formatMins(p.minutes)}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ),
-      },
-      {
-        id: 'conveniences' as const,
-        title: conveniences.title,
-        preview: [
-          ...((conveniences.hospitals.places ?? []).slice(0, 1).map((p) => `${p.name} · ${formatMins(p.minutes)}`)),
-          ...((conveniences.shoppingMalls.places ?? []).slice(0, 1).map((p) => `${p.name} · ${formatMins(p.minutes)}`)),
-        ],
-        content: (
-          <div className="grid gap-8 min-[640px]:grid-cols-2 min-[961px]:gap-12">
-            <div>
-              <p className={subTitle}>{conveniences.hospitals.title}</p>
-              <ul className={listCls}>
-                {(conveniences.hospitals.places ?? []).map((p, i) => (
-                  <li key={`hospital-${i}`} className={lineCls}>
-                    <span className="font-medium text-[#322c26]">{p.name}</span>
-                    <span className="text-brown"> - {formatMins(p.minutes)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className={subTitle}>{conveniences.shoppingMalls.title}</p>
-              <ul className={listCls}>
-                {(conveniences.shoppingMalls.places ?? []).map((p, i) => (
-                  <li key={`mall-${i}`} className={lineCls}>
-                    <span className="font-medium text-[#322c26]">{p.name}</span>
-                    <span className="text-brown"> - {formatMins(p.minutes)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        ),
-      },
-    ] as const
-  }, [data, listCls, lineCls, subTitle])
+    return mapped
+  }, [groups, listCls, lineCls])
 
   if (error) {
     return (
@@ -152,7 +80,7 @@ export function LocationMap() {
     )
   }
 
-  if (!data) {
+  if (!cards.length) {
     return <section className="min-h-[240px] bg-sand px-6" id="location" aria-busy="true" />
   }
 
@@ -160,26 +88,20 @@ export function LocationMap() {
     <section className="bg-sand px-6 py-16 min-[961px]:px-12 min-[961px]:py-20" id="location">
       <Reveal effect="left" delay={0}>
         <div className="mb-3.5 flex items-center gap-3 text-[0.68rem] tracking-[0.2em] text-brown uppercase before:h-px before:w-5 before:bg-brown before:content-['']">
-          {data.sectionLabel}
+          {'Location'}
         </div>
       </Reveal>
       <Reveal effect="right" delay={60}>
         <h2 className="font-display mb-4 text-[clamp(1.8rem,3vw,2.8rem)] leading-tight font-normal text-dark">
-          {data.title.before}
-          <em className="text-brown italic">{data.title.italic}</em>
-          {data.title.after}
+          {'Discover the '}
+          <em className="text-brown italic">{'Neighbourhood'}</em>
+          {''}
         </h2>
       </Reveal>
-      {data.intro?.trim() ? (
-        <Reveal effect="up" delay={100}>
-          <p className="mb-10 max-w-[680px] text-[0.88rem] leading-[1.9] text-[#4a4540]">{data.intro.trim()}</p>
-        </Reveal>
-      ) : (
-        <div className="mb-10" />
-      )}
+      <div className="mb-10" />
 
       <div className="grid w-full max-w-3xl grid-cols-1 justify-items-stretch gap-4 text-left min-[961px]:gap-5">
-        {cards.map((card, idx) => {
+        {cards.map((card: (typeof cards)[number], idx: number) => {
           const expanded = openId === card.id
           const panelId = `location-card-${card.id}-panel`
           const btnId = `location-card-${card.id}-btn`

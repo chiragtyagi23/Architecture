@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -25,7 +25,7 @@ function Header({ onOpenContact }: Props) {
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200/80">
       <div className="max-w-[min(1600px,96vw)] mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4 min-h-14 sm:min-h-18 w-full box-border">
         <Link
-          to="/"
+          href="/"
           className="inline-flex flex-col items-start justify-center py-1 px-2 sm:py-1.5 sm:px-3 rounded-lg bg-[#f0ebe3] shrink-0 text-inherit no-underline shadow-[0_1px_2px_rgba(0,0,0,0.06)] border border-gray-200/60"
           aria-label="MAX Life Real Estate - Home"
         >
@@ -57,7 +57,7 @@ function Header({ onOpenContact }: Props) {
             <ul className="flex items-center gap-0.5 m-0 p-0 list-none flex-wrap">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="inline-flex items-center py-1.5 px-3 rounded-full text-sm font-medium text-[#1a1a1a] hover:bg-white/50">
+                  <Link href={link.href} className="inline-flex items-center py-1.5 px-3 rounded-full text-sm font-medium text-[#1a1a1a] hover:bg-white/50">
                     {link.label}
                   </Link>
                 </li>
@@ -114,7 +114,7 @@ function Header({ onOpenContact }: Props) {
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
-                  to={link.href}
+                  href={link.href}
                   className="block py-3 px-3 rounded-lg text-base font-medium text-[#1a1a1a] hover:bg-white"
                   onClick={() => setMenuOpen(false)}
                 >
