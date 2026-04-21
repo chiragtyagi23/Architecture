@@ -1,0 +1,10 @@
+{
+  "sectionLabel": "VIDEOS",
+  "title": { "before": "Watch the ", "italic": "Project", "after": "" },
+  "items": [
+    { "label": "Intro", "url": "" },
+    { "label": "Walkthrough", "url": "" },
+    { "label": "Extra", "url": "" }
+  ]
+}
+

@@ -5,30 +5,37 @@ import type { EnquiryPayload } from './Enquiry'
 import { useTemplateBasePath, withTemplateBasePath } from '../lib/basePath'
 
 const POPUP_DISMISSED_KEY = 'mg_enquiry_popup_dismissed_v1'
-const POPUP_DELAY_MS = 10_000
+const DEFAULT_POPUP_DELAY_MS = 10_000
 
 const labelCls = 'mb-1 block text-[0.6rem] font-sans tracking-[0.12em] text-brown uppercase'
 const controlCls =
   'w-full border border-beige bg-cream px-3 py-2.5 font-sans text-sm text-dark transition-colors outline-none focus:border-brown'
 
 type Props = {
-  /** When false (e.g. intro splash), the 10s timer does not start yet. */
+  /** When this becomes true, the delay timer starts (first visit: after 3rd intro slide). Return visitors: true on load. */
   scheduleWhenReady: boolean
+  /** Milliseconds after `scheduleWhenReady` before the modal may open (e.g. short after intro; long for return visits). */
+  openDelayMs?: number
 }
 
-export function EnquiryPopup({ scheduleWhenReady }: Props) {
+export function EnquiryPopup(p: Props) {
+  const { scheduleWhenReady, openDelayMs = DEFAULT_POPUP_DELAY_MS } = p
   const uid = useId().replace(/:/g, '')
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [open, setOpen] = useState(false)
   const basePath = useTemplateBasePath()
-  /** True exactly `POPUP_DELAY_MS` after first mount (page load). */
   const [delayElapsed, setDelayElapsed] = useState(false)
   const { data, error } = useSiteSection<EnquiryPayload>('VITE_ENQUIRY_API_URL', '/demo-api/enquiry.json')
 
   useEffect(() => {
-    const t = window.setTimeout(() => setDelayElapsed(true), POPUP_DELAY_MS)
+    if (!scheduleWhenReady) {
+      setDelayElapsed(false)
+      return
+    }
+    setDelayElapsed(false)
+    const t = window.setTimeout(() => setDelayElapsed(true), openDelayMs)
     return () => window.clearTimeout(t)
-  }, [])
+  }, [scheduleWhenReady, openDelayMs])
 
   useEffect(() => {
     if (!delayElapsed || !scheduleWhenReady || error || !data) return
@@ -74,7 +81,7 @@ export function EnquiryPopup({ scheduleWhenReady }: Props) {
   const bgSrc = P?.backgroundImage?.trim()
   const bgUrl = bgSrc ? withTemplateBasePath(basePath, bgSrc) : ''
 
-  const p = (suffix: string) => `enq-popup-${uid}-${suffix}`
+  const id = (suffix: string) => `enq-popup-${uid}-${suffix}`
 
   return (
     <dialog
@@ -84,8 +91,8 @@ export function EnquiryPopup({ scheduleWhenReady }: Props) {
         'border-0 bg-transparent p-0 text-dark',
         '[&::backdrop]:bg-hero-ink/50 [&::backdrop]:backdrop-blur-[2px]',
       )}
-      aria-labelledby={p('title')}
-      aria-describedby={p('desc')}
+      aria-labelledby={id('title')}
+      aria-describedby={id('desc')}
       onClose={dismiss}
     >
       <div
@@ -110,20 +117,20 @@ export function EnquiryPopup({ scheduleWhenReady }: Props) {
         >
           ×
         </button>
-        <h2 id={p('title')} className="relative z-10 font-display text-xl font-normal leading-tight text-dark">
+        <h2 id={id('title')} className="relative z-10 font-display text-xl font-normal leading-tight text-dark">
           {title}
         </h2>
-        <p id={p('desc')} className="relative z-10 mt-1.5 text-[0.82rem] leading-snug text-brown">
+        <p id={id('desc')} className="relative z-10 mt-1.5 text-[0.82rem] leading-snug text-brown">
           {subtitle}
         </p>
 
         <form className="relative z-10 mt-4 flex flex-col gap-3" onSubmit={onSubmit}>
           <div className="flex flex-col gap-0.5">
-            <label htmlFor={p('name')} className={labelCls}>
+            <label htmlFor={id('name')} className={labelCls}>
               {R.nameField.label}
             </label>
             <input
-              id={p('name')}
+              id={id('name')}
               type="text"
               placeholder={R.nameField.placeholder}
               name={R.nameField.name}
@@ -132,11 +139,11 @@ export function EnquiryPopup({ scheduleWhenReady }: Props) {
             />
           </div>
           <div className="flex flex-col gap-0.5">
-            <label htmlFor={p('phone')} className={labelCls}>
+            <label htmlFor={id('phone')} className={labelCls}>
               {R.phoneField.label}
             </label>
             <input
-              id={p('phone')}
+              id={id('phone')}
               type="tel"
               placeholder={R.phoneField.placeholder}
               name={R.phoneField.name}
@@ -146,10 +153,10 @@ export function EnquiryPopup({ scheduleWhenReady }: Props) {
           </div>
           <div className="grid grid-cols-1 gap-x-3 gap-y-2 min-[480px]:grid-cols-2">
             <div className="flex min-w-0 flex-col gap-0.5">
-              <label htmlFor={p('bhk')} className={labelCls}>
+              <label htmlFor={id('bhk')} className={labelCls}>
                 {R.bhkField.label}
               </label>
-              <select id={p('bhk')} name={R.bhkField.name} defaultValue="" className={cn(controlCls, 'cursor-pointer')}>
+              <select id={id('bhk')} name={R.bhkField.name} defaultValue="" className={cn(controlCls, 'cursor-pointer')}>
                 {R.bhkField.options.map((o) => (
                   <option key={o.value || 'empty'} value={o.value}>
                     {o.label}
@@ -158,10 +165,10 @@ export function EnquiryPopup({ scheduleWhenReady }: Props) {
               </select>
             </div>
             <div className="flex min-w-0 flex-col gap-0.5">
-              <label htmlFor={p('budget')} className={labelCls}>
+              <label htmlFor={id('budget')} className={labelCls}>
                 {R.budgetField.label}
               </label>
-              <select id={p('budget')} name={R.budgetField.name} defaultValue="" className={cn(controlCls, 'cursor-pointer')}>
+              <select id={id('budget')} name={R.budgetField.name} defaultValue="" className={cn(controlCls, 'cursor-pointer')}>
                 {R.budgetField.options.map((o) => (
                   <option key={o.value || 'empty-b'} value={o.value}>
                     {o.label}

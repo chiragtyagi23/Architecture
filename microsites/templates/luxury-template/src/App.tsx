@@ -4,6 +4,8 @@ import { Hero } from './components/Hero'
 import { MarqueeStrip } from './components/MarqueeStrip'
 import { Overview } from './components/Overview'
 import { Gallery } from './components/Gallery'
+import { Videos } from './components/Videos'
+import { Reels } from './components/Reels'
 import { FloorPlans } from './components/FloorPlans'
 import { LocationMap } from './components/LocationMap'
 import { Amenities } from './components/Amenities'
@@ -16,6 +18,10 @@ import { IntroSplash } from './components/IntroSplash'
 
 const INTRO_SESSION_KEY = 'mg_site_intro_v1'
 
+interface MicrositeAppProps {
+  selected: any
+}
+
 function readIntroSeen(): boolean {
   try {
     return sessionStorage.getItem(INTRO_SESSION_KEY) === '1'
@@ -24,9 +30,16 @@ function readIntroSeen(): boolean {
   }
 }
 
-function App() {
-  const [showIntro, setShowIntro] = useState(() => !readIntroSeen())
-  const [suppressNavLogo, setSuppressNavLogo] = useState(() => !readIntroSeen())
+/** After 3rd immersive slide; first-time visitors start false so the popup timer waits for the intro gate. */
+const ENQUIRY_DELAY_AFTER_INTRO_GATE_MS = 900
+
+function App({ selected }: MicrositeAppProps) {
+  const introAlreadySeen = readIntroSeen()
+  const [showIntro, setShowIntro] = useState(() => !introAlreadySeen)
+  const [suppressNavLogo, setSuppressNavLogo] = useState(() => !introAlreadySeen)
+  const [enquiryGateOpen, setEnquiryGateOpen] = useState(() => introAlreadySeen)
+
+  const enquiryPopupDelayMs = introAlreadySeen ? 10_000 : ENQUIRY_DELAY_AFTER_INTRO_GATE_MS
 
   const onIntroNavReveal = useCallback(() => {
     setSuppressNavLogo(false)
@@ -44,18 +57,23 @@ function App() {
 
   return (
     <>
-      <EnquiryPopup scheduleWhenReady={!showIntro} />
+      <EnquiryPopup scheduleWhenReady={enquiryGateOpen} openDelayMs={enquiryPopupDelayMs} />
       {showIntro ? (
-        <IntroSplash onNavReveal={onIntroNavReveal} onComplete={onIntroComplete} />
+        <IntroSplash
+          onNavReveal={onIntroNavReveal}
+          onComplete={onIntroComplete}
+          onEnquiryGateOpen={() => setEnquiryGateOpen(true)}
+        />
       ) : null}
       <Nav suppressLogo={suppressNavLogo} />
       <Hero entranceReady={!showIntro} />
       <MarqueeStrip />
       <Overview />
       <Gallery />
+      <Videos selected={selected} />
+      <Reels selected={selected} />
       <FloorPlans />
       <Amenities />
-      <Highlights />
       <Benefits />
       <LocationMap />
       <Enquiry />

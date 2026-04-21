@@ -164,107 +164,149 @@
   }
 }
 
-/* ═══ Intro splash (FLIP + clip-path; driven by inline --intro-* on logo) ═══ */
+/* ═══ Intro splash: fullscreen wipe carousel + outro fade ═══ */
 @layer components {
+  @keyframes wipe-enter-ltr {
+    from {
+      transform: translate3d(-100%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes wipe-enter-rtl {
+    from {
+      transform: translate3d(100%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  @keyframes wipe-exit-for-ltr {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(100%, 0, 0);
+    }
+  }
+
+  @keyframes wipe-exit-for-rtl {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+
   .intro-splash {
-    --intro-fly-duration: 3s;
-    --intro-fly-ease: cubic-bezier(0.22, 0.45, 0.28, 1);
-    @apply pointer-events-auto fixed inset-0 z-[520] flex items-center justify-center overflow-hidden;
+    @apply pointer-events-auto fixed inset-0 z-[520] overflow-hidden bg-black transition-opacity duration-[0.64s] ease-out;
   }
 
-  .intro-splash--handoff {
-    @apply pointer-events-none;
+  .intro-splash--outro {
+    @apply opacity-0;
   }
 
-  .intro-splash__cream {
-    @apply pointer-events-auto absolute inset-0 z-0 bg-cream transition-[clip-path] ease-[cubic-bezier(0.22,0.45,0.28,1)];
-    clip-path: inset(0 0 0 0);
-    transition-duration: var(--intro-fly-duration);
-    -webkit-transition-duration: var(--intro-fly-duration);
-    -webkit-clip-path: inset(0 0 0 0);
-    -webkit-transition-property: clip-path, -webkit-clip-path;
+  .wipe-carousel__hold {
+    @apply absolute inset-0;
   }
 
-  .intro-splash--reveal .intro-splash__cream {
-    clip-path: inset(100% 0 0 0);
-    -webkit-clip-path: inset(100% 0 0 0);
+  .wipe-carousel__slide {
+    @apply absolute inset-0 h-full w-full object-cover object-center will-change-transform;
   }
 
-  .intro-splash__inner {
-    @apply pointer-events-none absolute left-0 right-0 top-[36%] z-[1] flex w-full max-w-full -translate-y-1/2 flex-col items-center gap-9 px-6;
+  .wipe-carousel__slide--hold {
+    @apply translate-x-0 transform-none;
   }
 
-  .intro-splash__inner--fly {
-    @apply gap-9;
+  .wipe-carousel__slide--enter-ltr {
+    animation: wipe-enter-ltr var(--wipe-dur, 1s) cubic-bezier(0.45, 0, 0.15, 1) forwards;
   }
 
-  .intro-splash__progress--phantom {
-    @apply pointer-events-none invisible shrink-0;
+  .wipe-carousel__slide--enter-rtl {
+    animation: wipe-enter-rtl var(--wipe-dur, 1s) cubic-bezier(0.45, 0, 0.15, 1) forwards;
   }
 
-  .intro-splash__inner--grip {
-    @apply gap-9;
+  .wipe-carousel__slide--exit-for-ltr {
+    animation: wipe-exit-for-ltr var(--wipe-dur, 1s) cubic-bezier(0.45, 0, 0.15, 1) forwards;
   }
 
-  .intro-splash__logo-wrap {
-    @apply w-max max-w-full;
+  .wipe-carousel__slide--exit-for-rtl {
+    animation: wipe-exit-for-rtl var(--wipe-dur, 1s) cubic-bezier(0.45, 0, 0.15, 1) forwards;
   }
 
-  .intro-splash__logo {
-    --intro-dx: 0px;
-    --intro-dy: 0px;
-    --intro-sx: 1;
-    --intro-sy: 1;
-    @apply inline-block whitespace-nowrap font-display text-[clamp(2rem,9vw,3.5rem)] font-medium leading-none tracking-[0.04em] text-dark will-change-transform;
-    transform: translate3d(var(--intro-dx), var(--intro-dy), 0) scale(var(--intro-sx), var(--intro-sy));
-    transform-origin: left top;
+  @keyframes intro-snapshot-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1.25rem, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
   }
 
-  .intro-splash__logo--grip:not(.intro-splash__logo--fly) {
-    transform: translate3d(0, 0, 0) scale(1.055, 1.055);
-    transition: transform 0.42s cubic-bezier(0.25, 0.85, 0.35, 1);
+  .intro-snapshot {
+    @apply flex flex-col justify-end px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[961px]:justify-center min-[961px]:px-16 min-[961px]:pb-20 min-[961px]:pt-28;
   }
 
-  .intro-splash__logo--fly {
-    transition: transform var(--intro-fly-duration) var(--intro-fly-ease);
+  .intro-snapshot__scrim {
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-hero-ink via-hero-ink/88 to-hero-ink/55 min-[961px]:bg-gradient-to-r min-[961px]:from-hero-ink min-[961px]:via-hero-ink/82 min-[961px]:to-hero-ink/35;
   }
 
-  .intro-splash__logo.intro-splash__logo--handoff {
-    @apply pointer-events-none opacity-0 blur-[12px];
-    transition:
-      opacity 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-      filter 0.52s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  .intro-snapshot__panel {
+    @apply relative z-[1] max-w-xl motion-safe:opacity-0 motion-safe:animate-[intro-snapshot-in_0.85s_cubic-bezier(0.22,0.45,0.28,1)_forwards] motion-reduce:opacity-100;
   }
 
-  .intro-splash__inner--fly .intro-splash__logo:not(.intro-splash__logo--handoff) {
-    text-shadow:
-      0 0 1px rgba(255, 255, 255, 0.98),
-      0 0 32px rgba(250, 247, 242, 0.9),
-      0 3px 20px rgba(46, 46, 46, 0.18);
+  .intro-snapshot__eyebrow {
+    @apply mb-5 flex items-center gap-3 font-sans text-[0.68rem] tracking-[0.2em] uppercase text-bl before:h-px before:w-8 before:shrink-0 before:bg-bl before:content-[""];
   }
 
-  .intro-splash__char {
-    @apply inline-block translate-y-[0.3em] opacity-0 transition-[opacity,transform] duration-[220ms] ease-out;
+  .intro-snapshot__headline {
+    @apply font-display mb-3 text-[clamp(2.2rem,5vw,3.6rem)] font-normal leading-[1.08];
   }
 
-  .intro-splash__char--on {
-    @apply translate-y-0 opacity-100;
+  .intro-snapshot__location {
+    @apply mb-5 font-sans text-[0.85rem] tracking-[0.06em] text-[#c9bfb2] max-[960px]:max-w-[32ch];
   }
 
-  .intro-splash__char--accent {
-    @apply text-bl;
+  .intro-snapshot__summary {
+    @apply mb-6 max-w-[40ch] font-sans text-[0.95rem] leading-relaxed text-[#e8e0d8];
   }
 
-  .intro-splash__progress {
-    @apply flex w-full justify-center;
+  .intro-snapshot__meta {
+    @apply mb-6 grid list-none grid-cols-2 gap-x-4 gap-y-3 p-0 min-[961px]:grid-cols-4;
   }
 
-  .intro-splash__progress-track {
-    @apply h-1 w-[min(18rem,78vw)] overflow-hidden rounded-sm bg-[rgba(139,115,85,0.22)];
+  .intro-snapshot__meta-value {
+    @apply font-display block text-lg leading-none text-bl;
   }
 
-  .intro-splash__progress-fill {
-    @apply h-full w-0 rounded-sm bg-gradient-to-r from-brown to-dark transition-[width] duration-150 ease-out;
+  .intro-snapshot__meta-label {
+    @apply mt-1 block font-sans text-[0.58rem] uppercase tracking-[0.12em] text-[#b8aea4];
+  }
+
+  .intro-snapshot__badge {
+    @apply mb-6 inline-flex items-center gap-1.5 self-start bg-green px-3 py-1.5 font-sans text-[0.62rem] font-medium uppercase tracking-[0.1em] text-white;
+  }
+
+  .intro-snapshot__actions {
+    @apply flex flex-col gap-3 min-[480px]:flex-row min-[480px]:flex-wrap min-[480px]:items-center;
+  }
+
+  .intro-snapshot__btn {
+    @apply cursor-pointer border-0 px-7 py-3.5 font-sans text-[0.72rem] font-medium tracking-[0.12em] uppercase transition-colors;
+  }
+
+  .intro-snapshot__btn--primary {
+    @apply bg-brown text-cream hover:bg-bl;
+  }
+
+  .intro-snapshot__btn--ghost {
+    @apply border border-white/25 bg-transparent text-sand hover:border-bl hover:text-bl;
   }
 
   /* Hero / benefits: gradient overlays use CSS variables */
@@ -290,6 +332,10 @@
     content: '';
     @apply pointer-events-none absolute inset-0 z-[1];
     background: var(--hero-overlay-gradient);
+  }
+
+  .hero.hero--immersive .hero-slide-stack--immersive::after {
+    content: none;
   }
 
   #benefits.benefits--has-bg {
