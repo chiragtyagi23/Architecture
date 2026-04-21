@@ -4,7 +4,7 @@ import { KeyframeCardReveal, keyframeRevealEffectAt } from './KeyframeCardReveal
 
 type TitleParts = { before: string; italic: string; after: string }
 
-type HighlightCard = { num: string; icon: string; title: string; text: string }
+type HighlightCard = { num: string; icon?: string; title: string; text?: string }
 
 type HighlightsPayload = {
   sectionLabel: string
@@ -59,10 +59,10 @@ export function Highlights() {
               data-num={cell.num}
             >
               <div className="mb-4 flex h-9 w-9 items-center justify-center bg-beige text-[0.9rem] text-brown">
-                {cell.icon}
+                {cell.icon ?? ''}
               </div>
               <div className="mb-2 text-[0.9rem] font-medium text-dark">{cell.title}</div>
-              <div className="text-[0.78rem] leading-[1.7] text-[#4d4840]">{cell.text}</div>
+              {cell.text ? <div className="text-[0.78rem] leading-[1.7] text-[#4d4840]">{cell.text}</div> : null}
             </div>
           </KeyframeCardReveal>
         ))}

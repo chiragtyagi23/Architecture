@@ -26,6 +26,7 @@ function AppShell() {
         <Route path="/commercial" element={<ComingSoon />} />
         <Route path="/listings" element={<ComingSoon />} />
         <Route path="/project-name" element={<ProjectNameMicrosite />} />
+        <Route path="/project-name/:id" element={<ProjectNameMicrosite />} />
       </Routes>
     </div>
   )

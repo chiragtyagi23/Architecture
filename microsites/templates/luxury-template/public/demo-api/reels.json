@@ -1,0 +1,10 @@
+{
+  "sectionLabel": "REELS",
+  "title": { "before": "Short ", "italic": "Reels", "after": "" },
+  "items": [
+    { "label": "Reel 1", "url": "" },
+    { "label": "Reel 2", "url": "" },
+    { "label": "Reel 3", "url": "" }
+  ]
+}
+
