@@ -19,8 +19,13 @@ export type CampaignFull = {
   templateKey?: 'luxury-template' | 'affordable-template'
 } & Record<string, unknown>
 
-function apiBase() {
-  return String(process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:4000').replace(/\/+$/, '')
+function apiBase(): string {
+  const raw = process.env.NEXT_PUBLIC_BACKEND_URL
+  const trimmed = typeof raw === 'string' ? raw.trim() : ''
+  if (trimmed.length === 0) {
+    throw new Error('Missing NEXT_PUBLIC_BACKEND_URL (set it in .env or .env.local)')
+  }
+  return trimmed.replace(/\/+$/, '')
 }
 
 export const fetchCampaigns = createAsyncThunk('campaigns/fetchCampaigns', async () => {

@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchCampaignById, fetchCampaigns } from '../store/campaignsSlice'
+import { fetchCampaigns } from '../store/campaignsSlice'
 
 function UpcomingProjects() {
   const data: UpcomingProjectsPayload = {
@@ -12,13 +11,9 @@ function UpcomingProjects() {
   const error: string | null = null
 
   const dispatch = useAppDispatch()
-  const router = useRouter()
   // NOTE: some setups type `useSelector` state as `unknown`; this cast keeps it beginner-friendly.
   const campaigns = useAppSelector((s) => (s as any).campaigns.items)
   const loading = useAppSelector((s) => (s as any).campaigns.loading)
-  const selectedId = useAppSelector((s) => (s as any).campaigns.selectedId)
-  const selectedLoading = useAppSelector((s) => (s as any).campaigns.selectedLoading)
-
   useEffect(() => {
     dispatch(fetchCampaigns())
   }, [])
@@ -95,13 +90,10 @@ function UpcomingProjects() {
                 key={row.id}
                 type="button"
                 onClick={() => {
-                  // 1) open template route with this id
-                  router.push(`/project-name/${row.id}?template=${encodeURIComponent(templateKey)}`)
-                  // 2) also fetch details (template page will fetch too)
-                  dispatch(fetchCampaignById(row.id))
+                  const path = `/project-name/${row.id}?template=${encodeURIComponent(templateKey)}`
+                  window.open(path, '_blank', 'noopener,noreferrer')
                 }}
                 className="text-left bg-white rounded-xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-shadow border-0 p-0 cursor-pointer"
-                aria-busy={selectedLoading && selectedId === row.id ? 'true' : 'false'}
               >
                 <div className="aspect-4/3 overflow-hidden bg-gray-100">
                   <img src={coverImage} alt="" className="w-full h-full object-cover block" />
@@ -110,9 +102,6 @@ function UpcomingProjects() {
                   <h3 className="m-0 mb-2 text-lg font-bold text-black">{title}</h3>
                   <p className="m-0 text-sm font-normal leading-relaxed text-gray-500">{description}</p>
                   <div className="mt-3 text-xs text-gray-500 break-all">ID: {row.id}</div>
-                  {selectedLoading && selectedId === row.id ? (
-                    <div className="mt-2 text-sm text-gray-600">Loading…</div>
-                  ) : null}
                 </div>
               </button>
             )
