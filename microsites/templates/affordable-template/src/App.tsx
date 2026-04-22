@@ -26,7 +26,7 @@ function App(props: MicrositeAppProps) {
       <Nav selected={(props as any).selected} />
       <Hero selected={(props as any).selected} />
       <Intro selected={(props as any).selected} />
-      <Features />
+      <Features selected={(props as any).selected} />
       <Config selected={(props as any).selected} />
       <Gallery selected={(props as any).selected} />
       <Amenities selected={(props as any).selected} />

@@ -13,6 +13,14 @@ type BenefitsPayload = {
   backgroundImages?: ImageSlide[]
 }
 
+function hasRealBenefitsContent(data: BenefitsPayload): boolean {
+  const hasTitle = (data.title.before + data.title.italic + data.title.after).trim().length > 0
+  const hasItems = data.items.some((it) => it.title.trim().length > 0 || it.text.trim().length > 0)
+  const hasStats = data.stats.some((s) => s.value.trim().length > 0 || s.label.trim().length > 0)
+  const hasBg = (data.backgroundImages ?? []).some((s) => s.src.trim().length > 0)
+  return hasTitle || hasItems || hasStats || hasBg
+}
+
 export function Benefits() {
   const selected = useSelectedCampaign()
   const raw = selected?.benefits
@@ -39,9 +47,8 @@ export function Benefits() {
     )
   }
 
-  if (!data) {
-    return <section className="min-h-[400px] bg-dark" id="benefits" aria-busy="true" />
-  }
+  if (!data) return null
+  if (!hasRealBenefitsContent(data)) return null
 
   const bgSlides = data.backgroundImages ?? []
   const hasBg = bgSlides.length > 0

@@ -13,6 +13,14 @@ type OverviewPayload = {
   certifications: { label: string; value: string; tone?: 'green' }[]
 }
 
+function hasRealOverviewContent(data: OverviewPayload): boolean {
+  const hasTitle = Boolean((data.title.before || data.title.italic || data.title.after).trim?.() ?? (data.title.before || data.title.italic || data.title.after))
+  const hasBody = data.body.trim().length > 0
+  const hasFacts = data.facts.some((f) => f.key.trim().length > 0 && f.value.trim().length > 0)
+  const hasCerts = data.certifications.some((c) => c.label.trim().length > 0 && c.value.trim().length > 0)
+  return hasTitle || hasBody || hasFacts || hasCerts
+}
+
 export function Overview() {
   const selected = useSelectedCampaign()
   const raw = selected?.overview
@@ -46,9 +54,8 @@ export function Overview() {
     )
   }
 
-  if (!data) {
-    return <section className="min-h-[400px] p-16 px-6" id="overview" aria-busy="true" />
-  }
+  if (!data) return null
+  if (!hasRealOverviewContent(data)) return null
 
   return (
     <section className="p-16 px-6 min-[961px]:px-12 min-[961px]:py-20" id="overview">

@@ -80,9 +80,7 @@ export function LocationMap() {
     )
   }
 
-  if (!cards.length) {
-    return <section className="min-h-[240px] bg-sand px-6" id="location" aria-busy="true" />
-  }
+  if (!cards.length) return null
 
   return (
     <section className="bg-sand px-6 py-16 min-[961px]:px-12 min-[961px]:py-20" id="location">

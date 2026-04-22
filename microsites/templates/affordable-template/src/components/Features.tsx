@@ -1,4 +1,21 @@
-export function Features() {
+function nonEmpty(s: unknown) {
+  return typeof s === 'string' && s.trim().length > 0
+}
+
+export function Features({ selected }: { selected?: any }) {
+  const raw = selected?.benefits
+  const items = Array.isArray(raw?.items)
+    ? raw.items
+        .map((it: any) => ({
+          title: String(it?.title ?? '').trim(),
+          text: String(it?.text ?? '').trim(),
+        }))
+        .filter((it: any) => nonEmpty(it.title) || nonEmpty(it.text))
+    : []
+
+  // Hide the whole "Why Choose Us" section if no real campaign data.
+  if (!items.length) return null
+
   return (
     <section id="features">
       <div className="section-container">
@@ -9,23 +26,17 @@ export function Features() {
           </h2>
         </div>
         <div className="features-grid">
-          <div className="feat-card c-aqua reveal">
-            <div className="feat-icon bg-aqua">💰</div>
-            <div className="feat-title">Budget Friendly Pricing</div>
-            <div className="feat-desc">
-              Homes priced for real families. No hidden costs, no surprises — just honest value for your hard-earned money.
-            </div>
-          </div>
-          <div className="feat-card c-red reveal">
-            <div className="feat-icon bg-red">🏗️</div>
-            <div className="feat-title">Quality Construction</div>
-            <div className="feat-desc">Built with top-grade materials and skilled craftsmanship. Durable, safe, and beautiful.</div>
-          </div>
-          <div className="feat-card c-yellow reveal">
-            <div className="feat-icon bg-yellow">📍</div>
-            <div className="feat-title">Prime Location</div>
-            <div className="feat-desc">Centrally located with easy access to schools, hospitals, malls, and metro stations.</div>
-          </div>
+          {items.slice(0, 3).map((it: any, idx: number) => {
+            const tone = idx === 0 ? 'aqua' : idx === 1 ? 'red' : 'yellow'
+            const icon = idx === 0 ? '💰' : idx === 1 ? '🏗️' : '📍'
+            return (
+              <div key={`${it.title}-${idx}`} className={`feat-card c-${tone} reveal`}>
+                <div className={`feat-icon bg-${tone}`}>{icon}</div>
+                <div className="feat-title">{it.title || `Benefit ${idx + 1}`}</div>
+                <div className="feat-desc">{it.text}</div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>

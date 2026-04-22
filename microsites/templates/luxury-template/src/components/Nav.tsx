@@ -1,6 +1,7 @@
 import { type MouseEvent, useEffect, useState } from 'react'
 import { scrollToSection } from '../lib/siteApi'
 import { cn } from '../lib/cn'
+import { luxuryNavLinkHrefVisible } from '../lib/luxuryNavVisibility'
 import { Reveal } from './Reveal'
 import { useSelectedCampaign } from '../lib/selectedCampaign'
 
@@ -16,21 +17,23 @@ type NavProps = {
 
 export function Nav({ suppressLogo = false }: NavProps) {
   const selected = useSelectedCampaign()
+  const allMenuItems = [
+    { label: 'Overview', link: '#overview' },
+    { label: 'Gallery', link: '#gallery' },
+    { label: 'Residences', link: '#residences' },
+    { label: 'Amenities', link: '#amenities' },
+    { label: 'Highlights', link: '#highlights' },
+    { label: 'Benefits', link: '#benefits' },
+    { label: 'Location', link: '#location' },
+    { label: 'Enquiry', link: '#enquiry' },
+  ] as const
+  const menuItems = allMenuItems.filter((item) => luxuryNavLinkHrefVisible(item.link, selected))
   const data: NavPayload = {
     logo: {
       textMain: String(selected?.title ?? 'Project').split(' ')[0] || 'Project',
       textSecondary: String(selected?.title ?? 'Name').split(' ').slice(1).join(' ') || 'Name',
     },
-    menuItems: [
-      { label: 'Overview', link: '#overview' },
-      { label: 'Gallery', link: '#gallery' },
-      { label: 'Residences', link: '#residences' },
-      { label: 'Amenities', link: '#amenities' },
-      { label: 'Highlights', link: '#highlights' },
-      { label: 'Benefits', link: '#benefits' },
-      { label: 'Location', link: '#location' },
-      { label: 'Enquiry', link: '#enquiry' },
-    ],
+    menuItems: [...menuItems],
     cta: { label: 'Enquire', link: '#enquiry' },
   }
   const [menuOpen, setMenuOpen] = useState(false)

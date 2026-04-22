@@ -17,11 +17,13 @@ export function Amenities() {
     ? {
         sectionLabel: 'Amenities',
         title: { before: 'Lifestyle & ', italic: 'Amenities', after: '' },
-        items: rawItems.map((a: any) => ({
-          icon: String(a?.icon ?? ''),
-          name: String(a?.name ?? ''),
-          desc: String(a?.desc ?? ''),
-        })),
+        items: rawItems
+          .map((a: any) => ({
+            icon: String(a?.icon ?? ''),
+            name: String(a?.name ?? ''),
+            desc: String(a?.desc ?? ''),
+          }))
+          .filter((it: any) => it.name.trim().length > 0 || it.desc.trim().length > 0),
       }
     : null
   const error: string | null = null
@@ -34,9 +36,8 @@ export function Amenities() {
     )
   }
 
-  if (!data) {
-    return <section className="min-h-[400px] px-6" id="amenities" aria-busy="true" />
-  }
+  if (!data) return null
+  if (!data.items.length) return null
 
   return (
     <section className="px-6 py-16 min-[961px]:px-12 min-[961px]:py-20" id="amenities">

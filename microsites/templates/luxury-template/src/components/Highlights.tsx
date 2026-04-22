@@ -21,12 +21,14 @@ export function Highlights() {
     ? {
         sectionLabel: 'Highlights',
         title: { before: 'Project ', italic: 'Highlights', after: '' },
-        items: rawItems.map((h: any) => ({
-          num: String(h?.num ?? ''),
-          icon: h?.icon != null ? String(h.icon) : undefined,
-          title: String(h?.title ?? ''),
-          text: h?.text != null ? String(h.text) : undefined,
-        })),
+        items: rawItems
+          .map((h: any) => ({
+            num: String(h?.num ?? ''),
+            icon: h?.icon != null ? String(h.icon) : undefined,
+            title: String(h?.title ?? ''),
+            text: h?.text != null ? String(h.text) : undefined,
+          }))
+          .filter((h: any) => h.title.trim().length > 0 || String(h.text ?? '').trim().length > 0),
       }
     : null
   const error: string | null = null
@@ -39,11 +41,10 @@ export function Highlights() {
     )
   }
 
-  if (!data) {
-    return <section className="min-h-[400px] bg-beige px-6" id="highlights" aria-busy="true" />
-  }
+  if (!data) return null
 
   const cards = data.items ?? data.cells ?? []
+  if (!cards.length) return null
 
   return (
     <section className="bg-beige px-6 py-16 min-[961px]:px-12 min-[961px]:py-20" id="highlights">

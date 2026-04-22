@@ -1,5 +1,6 @@
 export function Amenities({ selected }: { selected?: any }) {
   const items = Array.isArray(selected?.amenities) ? selected.amenities : []
+  if (!items.length) return null
   return (
     <section id="amenities">
       <div className="section-container">

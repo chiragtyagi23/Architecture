@@ -39,14 +39,16 @@ export function Gallery() {
     ? {
         sectionLabel: 'Gallery',
         title: { before: 'Explore the ', italic: 'Gallery', after: '' },
-        cells: rawCells.map((c: any) => ({
-          tag: String(c?.tag ?? ''),
-          feature: Boolean(c?.feature),
-          wideBottom: Boolean(c?.wideBottom),
-          images: Array.isArray(c?.images)
-            ? c.images.map((img: any) => ({ src: String(img?.src ?? ''), alt: String(img?.alt ?? '') })).filter((s: any) => s.src)
-            : [],
-        })),
+        cells: rawCells
+          .map((c: any) => ({
+            tag: String(c?.tag ?? ''),
+            feature: Boolean(c?.feature),
+            wideBottom: Boolean(c?.wideBottom),
+            images: Array.isArray(c?.images)
+              ? c.images.map((img: any) => ({ src: String(img?.src ?? ''), alt: String(img?.alt ?? '') })).filter((s: any) => s.src)
+              : [],
+          }))
+          .filter((c: any) => (c.images?.length ?? 0) > 0),
       }
     : null
   const error: string | null = null
@@ -59,11 +61,8 @@ export function Gallery() {
     )
   }
 
-  if (!data) {
-    return (
-      <section className="min-h-[400px] bg-beige px-6 py-16 min-[961px]:px-12" id="gallery" aria-busy="true" />
-    )
-  }
+  if (!data) return null
+  if (!data.cells.length) return null
 
   const isFour = data.cells.length === 4
 

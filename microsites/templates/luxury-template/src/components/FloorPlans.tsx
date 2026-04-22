@@ -32,6 +32,24 @@ type FloorPlansPayload = {
 /** `public/blueprints/cocoparisienne-blueprint-354233.jpg` — override via `blueprintImage` in floor plans JSON. */
 const DEFAULT_FLOOR_PLAN_BLUEPRINT = '/blueprints/cocoparisienne-blueprint-354233.jpg'
 
+function hasRealFloorPlansContent(data: FloorPlansPayload): boolean {
+  const hasTitle = (data.title.before + data.title.italic + data.title.after).trim().length > 0
+  const hasBlueprint = (data.blueprintImage ?? '').trim().length > 0
+  const panels = data.panels && typeof data.panels === 'object' ? data.panels : {}
+  const panelKeys = Object.keys(panels)
+  const hasAnyPanel = panelKeys.length > 0
+  const hasAnyImages = panelKeys.some((k) =>
+    Array.isArray((panels as any)[k]?.floorPlanImages)
+      ? (panels as any)[k].floorPlanImages.some((s: any) => typeof s === 'string' && s.trim().length > 0)
+      : false,
+  )
+  const hasAnyRowContent = panelKeys.some((k) => {
+    const rows = Array.isArray((panels as any)[k]?.rows) ? (panels as any)[k].rows : []
+    return rows.some((r: any) => Array.isArray(r) && r.some((cell: any) => typeof cell === 'string' && cell.trim().length > 0))
+  })
+  return hasTitle || hasBlueprint || hasAnyPanel || hasAnyImages || hasAnyRowContent
+}
+
 /** Short label for plan tabs (e.g. "3 BHK — Type A" → "Type A"). */
 function planTabLabel(configurationCell: string): string {
   const trimmed = configurationCell.trim()
@@ -91,9 +109,9 @@ export function FloorPlans() {
     )
   }
 
-  if (!data || !active || !data.panels[active]) {
-    return <section id="residences" className="min-h-[400px] px-6 py-16" aria-busy="true" />
-  }
+  if (!data) return null
+  if (!hasRealFloorPlansContent(data)) return null
+  if (!active || !data.panels[active]) return null
 
   const sectionBlueprint = data.blueprintImage?.trim() || DEFAULT_FLOOR_PLAN_BLUEPRINT
 
