@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react'
 import { Nav } from './components/Nav'
 import { Hero } from './components/Hero'
-import { MarqueeStrip } from './components/MarqueeStrip'
 import { Overview } from './components/Overview'
+import { Offers } from './components/Offers'
+import { UspImages } from './components/UspImages'
 import { Gallery } from './components/Gallery'
 import { Videos } from './components/Videos'
 import { Reels } from './components/Reels'
@@ -68,15 +69,17 @@ function App({ selected }: MicrositeAppProps) {
       ) : null}
       <Nav suppressLogo={suppressNavLogo} />
       <Hero entranceReady={!showIntro} />
-      <MarqueeStrip />
       <Overview />
+      <Offers />
+      <UspImages />
       <Gallery />
-      <Videos selected={selected} />
-      <Reels selected={selected} />
       <FloorPlans />
+      <Highlights />
       <Amenities />
       <Benefits />
       <LocationMap />
+      <Videos selected={selected} />
+      <Reels selected={selected} />
       <Enquiry />
       <SiteFooter />
     </SelectedCampaignProvider>

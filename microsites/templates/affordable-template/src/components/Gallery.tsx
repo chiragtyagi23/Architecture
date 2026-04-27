@@ -1,12 +1,12 @@
 import { useMemo, useRef } from 'react'
 
-function asGroups(selected: any): { tag: string; images: { src: string; alt?: string }[] }[] {
-  const rows = Array.isArray(selected?.projectImages) ? selected.projectImages : []
+function asGroupsFromRows(rows: any[]): { tag: string; images: { src: string; alt?: string }[] }[] {
   return rows
     .map((r: any) => ({
       tag: String(r?.tag ?? 'Gallery'),
       images: Array.isArray(r?.images) ? r.images : [],
     }))
+    .filter((g: any) => !String(g.tag).startsWith('__'))
     .filter((g: any) => Array.isArray(g.images) && g.images.length > 0)
 }
 
@@ -49,8 +49,22 @@ function GalleryGroupSlider({ tag, images }: { tag: string; images: { src: strin
 }
 
 export function Gallery({ selected }: { selected?: any }) {
-  const groups = useMemo(() => asGroups(selected), [selected])
-  if (!groups.length) return null
+  const { externalGroups, internalGroups, fallbackGroups } = useMemo(() => {
+    const extRows = Array.isArray((selected as any)?.extenalimage) ? (selected as any).extenalimage : []
+    const intRows = Array.isArray((selected as any)?.Internalimages) ? (selected as any).Internalimages : []
+    const fallbackRows = Array.isArray((selected as any)?.projectImages) ? (selected as any).projectImages : []
+
+    const externalGroups = extRows.length ? asGroupsFromRows(extRows) : []
+    const internalGroups = intRows.length ? asGroupsFromRows(intRows) : []
+    const fallbackGroups = fallbackRows.length ? asGroupsFromRows(fallbackRows) : []
+    return { externalGroups, internalGroups, fallbackGroups }
+  }, [selected])
+
+  const hasSplit = externalGroups.length > 0 || internalGroups.length > 0
+  const groups = hasSplit ? [] : fallbackGroups
+
+  if (!hasSplit && !groups.length) return null
+  if (hasSplit && !externalGroups.length && !internalGroups.length) return null
   return (
     <section id="gallery">
       <div className="section-container">
@@ -62,9 +76,28 @@ export function Gallery({ selected }: { selected?: any }) {
         </div>
 
         <div className="gallery-sliders">
-          {groups.map((g) => (
-            <GalleryGroupSlider key={g.tag} tag={g.tag} images={g.images} />
-          ))}
+          {hasSplit ? (
+            <>
+              {externalGroups.length ? (
+                <div className="reveal" style={{ marginTop: 10, marginBottom: 4, fontWeight: 800 }}>
+                  External images
+                </div>
+              ) : null}
+              {externalGroups.map((g) => (
+                <GalleryGroupSlider key={`ext-${g.tag}`} tag={g.tag} images={g.images} />
+              ))}
+              {internalGroups.length ? (
+                <div className="reveal" style={{ marginTop: 18, marginBottom: 4, fontWeight: 800 }}>
+                  Internal images
+                </div>
+              ) : null}
+              {internalGroups.map((g) => (
+                <GalleryGroupSlider key={`int-${g.tag}`} tag={g.tag} images={g.images} />
+              ))}
+            </>
+          ) : (
+            groups.map((g) => <GalleryGroupSlider key={g.tag} tag={g.tag} images={g.images} />)
+          )}
         </div>
       </div>
     </section>

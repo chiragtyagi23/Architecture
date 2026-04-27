@@ -2,6 +2,10 @@ export function Hero({ selected }: { selected?: any }) {
   const title = typeof selected?.title === 'string' ? selected.title : 'Affordable Dream Home'
   const address = typeof selected?.address === 'string' ? selected.address : ''
   const cover = typeof selected?.coverImage === 'string' ? selected.coverImage : ''
+  const rows = Array.isArray(selected?.projectImages) ? selected.projectImages : []
+  const bannerGroup = rows.find((r: any) => String(r?.tag ?? '') === '__banners')
+  const groupBannerUrl =
+    typeof bannerGroup?.images?.[0]?.src === 'string' ? bannerGroup.images[0].src : ''
   const banners = Array.isArray(selected?.banners) ? selected.banners : []
   const bannerUrl =
     typeof banners?.[0]?.imageId === 'string'
@@ -9,7 +13,7 @@ export function Hero({ selected }: { selected?: any }) {
       : typeof selected?.hero?.data?.backgroundImages?.[0]?.src === 'string'
         ? selected.hero.data.backgroundImages[0].src
         : ''
-  const heroImage = cover || bannerUrl
+  const heroImage = cover || groupBannerUrl || bannerUrl
   return (
     <section id="hero">
       <div className="hero-inner">

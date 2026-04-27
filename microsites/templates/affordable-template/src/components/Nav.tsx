@@ -27,6 +27,21 @@ function affordableAmenitiesNavVisible(selected?: any) {
   return Array.isArray(selected?.amenities) && selected.amenities.length > 0
 }
 
+function offersNavVisible(selected?: any) {
+  const docs = Array.isArray(selected?.documents) ? selected.documents : []
+  return docs.some((d: any) => String(d?.type ?? '') === 'offer_creative' && typeof d?.url === 'string' && d.url.trim().length > 0)
+}
+
+function uspNavVisible(selected?: any) {
+  const docs = Array.isArray(selected?.documents) ? selected.documents : []
+  return docs.some((d: any) => String(d?.type ?? '') === 'usp_image' && typeof d?.url === 'string' && d.url.trim().length > 0)
+}
+
+function builderNavVisible(selected?: any) {
+  const items = Array.isArray(selected?.highlights) ? selected.highlights : []
+  return items.some((h: any) => String(h?.title ?? '').trim().length > 0 || String(h?.text ?? '').trim().length > 0)
+}
+
 export function Nav({ selected }: { selected?: any }) {
   const title = typeof selected?.title === 'string' ? selected.title : 'NestNest Homes'
   const logo = typeof selected?.logo === 'string' ? selected.logo : ''
@@ -34,8 +49,11 @@ export function Nav({ selected }: { selected?: any }) {
   const navLinks = [
     { href: '#intro', label: 'About', visible: true },
     { href: '#features', label: 'Features', visible: affordableFeaturesNavVisible(selected) },
-    { href: '#config', label: 'BHK Plans', visible: true },
+    { href: '#offers', label: 'Offers', visible: offersNavVisible(selected) },
+    { href: '#usp', label: 'USP', visible: uspNavVisible(selected) },
     { href: '#gallery', label: 'Gallery', visible: affordableGalleryNavVisible(selected) },
+    { href: '#config', label: 'BHK Plans', visible: true },
+    { href: '#builder', label: 'Builder', visible: builderNavVisible(selected) },
     { href: '#amenities', label: 'Amenities', visible: affordableAmenitiesNavVisible(selected) },
     { href: '#location', label: 'Location', visible: true },
   ].filter((l) => l.visible)

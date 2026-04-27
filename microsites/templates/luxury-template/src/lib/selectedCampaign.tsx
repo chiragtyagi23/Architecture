@@ -9,7 +9,7 @@ export function SelectedCampaignProvider({
   selected: any
   children: React.ReactNode
 }) {
-  return <SelectedCampaignContext value={selected}>{children}</SelectedCampaignContext>
+  return <SelectedCampaignContext.Provider value={selected}>{children}</SelectedCampaignContext.Provider>
 }
 
 export function useSelectedCampaign(): any {

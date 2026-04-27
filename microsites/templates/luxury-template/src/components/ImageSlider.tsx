@@ -86,7 +86,7 @@ export function ImageSlider({
   return (
     <div
       id={rootId}
-      className={cn('absolute inset-0 z-[1] overflow-hidden bg-beige', className)}
+      className={cn('absolute inset-0 z-1 overflow-hidden bg-beige', className)}
       role="region"
       aria-roledescription="carousel"
       aria-label={ariaLabel}
@@ -105,11 +105,12 @@ export function ImageSlider({
             loading={i === 0 ? 'eager' : 'lazy'}
             decoding="async"
             className={cn(
-              'pointer-events-none absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500 ease-out',
-              fit === 'contain' && 'object-contain',
+              'pointer-events-none absolute inset-0 h-full w-full object-center transition-opacity duration-500 ease-out',
+              fit === 'contain' ? 'object-contain' : 'object-cover',
               i === safeIndex ? 'opacity-100' : 'opacity-0',
               imgClassName,
             )}
+            style={fit === 'contain' ? ({ objectFit: 'contain' } as any) : undefined}
             aria-hidden={i !== safeIndex}
           />
         ))}
@@ -119,7 +120,7 @@ export function ImageSlider({
         <>
           <button
             type="button"
-            className="absolute top-1/2 left-2 z-[4] flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 bg-dark/55 text-sand transition-[background,transform] hover:bg-dark/82 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand max-[960px]:top-auto max-[960px]:bottom-12 max-[960px]:translate-y-0 min-[961px]:bottom-auto"
+            className="absolute top-1/2 left-2 z-4 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 bg-dark/55 text-sand transition-[background,transform] hover:bg-dark/82 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand max-[960px]:top-auto max-[960px]:bottom-12 max-[960px]:translate-y-0 min-[961px]:bottom-auto"
             aria-controls={rootId}
             aria-label="Previous image"
             onClick={() => go(-1)}
@@ -130,7 +131,7 @@ export function ImageSlider({
           </button>
           <button
             type="button"
-            className="absolute top-1/2 right-2 z-[4] flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 bg-dark/55 text-sand transition-[background,transform] hover:bg-dark/82 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand max-[960px]:top-auto max-[960px]:bottom-12 max-[960px]:translate-y-0 min-[961px]:bottom-auto"
+            className="absolute top-1/2 right-2 z-4 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 bg-dark/55 text-sand transition-[background,transform] hover:bg-dark/82 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sand max-[960px]:top-auto max-[960px]:bottom-12 max-[960px]:translate-y-0 min-[961px]:bottom-auto"
             aria-controls={rootId}
             aria-label="Next image"
             onClick={() => go(1)}
@@ -144,7 +145,7 @@ export function ImageSlider({
 
       {showDots && !single ? (
         <div
-          className="slider-dots absolute bottom-3 left-1/2 z-[4] flex -translate-x-1/2 items-center gap-3 min-[961px]:bottom-4"
+          className="slider-dots absolute bottom-3 left-1/2 z-4 flex -translate-x-1/2 items-center gap-3 min-[961px]:bottom-4"
           role="tablist"
           aria-label="Slide markers"
         >

@@ -135,6 +135,13 @@ export function IntroSplash({ onComplete, onNavReveal, onEnquiryGateOpen }: Prop
     data.snapshotSummary?.trim() ||
     `Exclusive residences in a well-connected neighbourhood — ${data.locationLine}`
 
+  const projectTitleRaw = String(selected?.title ?? '').trim()
+  const fallbackTitle = [String(data.titleLine1 ?? '').trim(), String(data.titleLine2Italic ?? '').trim()]
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+  const headlineTitle = projectTitleRaw || fallbackTitle || 'Project Name'
+
   return (
     <div
       className={cn('intro-splash', outro && 'intro-splash--outro')}
@@ -170,8 +177,7 @@ export function IntroSplash({ onComplete, onNavReveal, onEnquiryGateOpen }: Prop
           <div className="intro-snapshot__panel">
             <p className="intro-snapshot__eyebrow">{data.eyebrow}</p>
             <h1 id="intro-snapshot-title" className="intro-snapshot__headline font-display">
-              <span className="text-sand">{data.titleLine1}</span>{' '}
-              <em className="italic text-bl">{data.titleLine2Italic}</em>
+              <span className="text-sand">{headlineTitle}</span>
             </h1>
             <p className="intro-snapshot__location">{data.locationLine}</p>
             <p className="intro-snapshot__summary">{summary}</p>

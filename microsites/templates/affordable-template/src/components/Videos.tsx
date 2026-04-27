@@ -30,13 +30,13 @@ function byKind(items: MediaItem[], kind: string): string {
 function VideoTile({ label, url }: { label: string; url: string }) {
   const trimmed = url.trim()
   if (!trimmed) return null
-  const isMp4 = /\.mp4(\?|#|$)/i.test(trimmed)
+  const isDirectVideo = /\.(mp4|webm|ogg|ogv|m4v)(\?|#|$)/i.test(trimmed) || /\/uploads\//i.test(trimmed)
 
   return (
     <div className="reveal" style={{ borderRadius: 18, overflow: 'hidden', background: '#fff' }}>
       <div style={{ padding: '10px 12px', borderBottom: '1px solid rgba(0,0,0,0.06)', fontWeight: 700 }}>{label}</div>
       <div style={{ aspectRatio: '16/9', background: '#000' as any }}>
-        {isMp4 ? (
+        {isDirectVideo ? (
           <video controls preload="metadata" src={trimmed} style={{ width: '100%', height: '100%' }} />
         ) : (
           <div

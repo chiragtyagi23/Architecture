@@ -6,7 +6,10 @@ import { Hero } from './components/Hero'
 import { Intro } from './components/Intro'
 import { Features } from './components/Features'
 import { Config } from './components/Config'
+import { Offers } from './components/Offers'
+import { UspImages } from './components/UspImages'
 import { Gallery } from './components/Gallery'
+import { BuilderUsp } from './components/BuilderUsp'
 import { Amenities } from './components/Amenities'
 import { Location } from './components/Location'
 import { Videos } from './components/Videos'
@@ -27,8 +30,11 @@ function App(props: MicrositeAppProps) {
       <Hero selected={(props as any).selected} />
       <Intro selected={(props as any).selected} />
       <Features selected={(props as any).selected} />
-      <Config selected={(props as any).selected} />
+      <Offers selected={(props as any).selected} />
+      <UspImages selected={(props as any).selected} />
       <Gallery selected={(props as any).selected} />
+      <Config selected={(props as any).selected} />
+      <BuilderUsp selected={(props as any).selected} />
       <Amenities selected={(props as any).selected} />
       <Location selected={(props as any).selected} />
       <Videos selected={(props as any).selected} />

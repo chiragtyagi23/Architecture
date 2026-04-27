@@ -38,7 +38,7 @@ function byKind(items: MediaItem[], kind: string): string {
 function ReelTile({ label, url }: { label: string; url: string }) {
   const trimmed = url.trim()
   if (!trimmed) return null
-  const isMp4 = /\.mp4(\?|#|$)/i.test(trimmed)
+  const isDirectVideo = /\.(mp4|webm|ogg|ogv|m4v)(\?|#|$)/i.test(trimmed) || /\/uploads\//i.test(trimmed)
 
   return (
     <div className="rounded-2xl border border-gray-900/10 bg-white shadow-sm overflow-hidden">
@@ -46,7 +46,7 @@ function ReelTile({ label, url }: { label: string; url: string }) {
         <div className="text-sm font-semibold text-gray-900">{label}</div>
       </div>
       <div className="aspect-9/16 bg-black">
-        {isMp4 ? (
+        {isDirectVideo ? (
           <video className="h-full w-full" controls preload="metadata" src={trimmed} />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-black text-white text-sm px-4 text-center">

@@ -23,6 +23,19 @@ export default function ProjectNameMicrosite({ id, templateOverride }: Props) {
     dispatch(fetchCampaignById(id))
   }, [dispatch, id])
 
+  React.useEffect(() => {
+    if (!id) return
+    // Debug: inspect what we received from backend/store for this campaign.
+    // eslint-disable-next-line no-console
+    console.log('[Microsite] route campaign id:', id)
+    // eslint-disable-next-line no-console
+    console.log('[Microsite] selectedId:', selectedId)
+    // eslint-disable-next-line no-console
+    console.log('[Microsite] selectedError:', selectedError)
+    // eslint-disable-next-line no-console
+    console.log('[Microsite] selected (raw):', selected)
+  }, [id, selected, selectedError, selectedId])
+
   if (!id) {
     return (
       <div style={{ padding: 24, fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif' }}>
@@ -52,6 +65,9 @@ export default function ProjectNameMicrosite({ id, templateOverride }: Props) {
     const key = selected && typeof selected === 'object' && 'templateKey' in selected ? (selected as any).templateKey : ''
     return typeof key === 'string' ? key.toLowerCase() : ''
   })()
+
+  // eslint-disable-next-line no-console
+  console.log('[Microsite] resolvedTemplate:', resolvedTemplate, 'override:', templateOverrideKey)
 
   return resolvedTemplate === 'affordable' ||
     resolvedTemplate === 'affordable-template' ||
