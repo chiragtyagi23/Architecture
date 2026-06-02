@@ -1,12 +1,12 @@
 'use client'
 
 import SiteLayout from '../../layouts/SiteLayout'
-import ProjectsPage from '../../views/ProjectsPage'
+import ComingSoon from '../../components/ComingSoon'
 
-export default function Page() {
+export default function ServicesPage() {
   return (
     <SiteLayout>
-      <ProjectsPage />
+      <ComingSoon />
     </SiteLayout>
   )
 }

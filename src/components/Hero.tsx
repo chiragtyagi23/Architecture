@@ -1,111 +1,97 @@
-import { useState, type FormEvent } from 'react'
-import toast from 'react-hot-toast'
-import { submitSubscribeEmail } from '../utils/web3forms'
+import { useState } from 'react'
+
+const HERO_CARDS = [
+  { title: 'Home inspections', icon: 'https://placehold.co/44x44/1B3CFF/FFFFFF?text=H' },
+  { title: 'Property insurance', icon: 'https://placehold.co/45x45/1B3CFF/FFFFFF?text=P' },
+  { title: 'Best location', icon: 'https://placehold.co/45x45/1B3CFF/FFFFFF?text=L' },
+  { title: 'Lots & land', icon: 'https://placehold.co/50x44/1B3CFF/FFFFFF?text=T' },
+]
 
 function Hero() {
-  const data: HeroPayload = {
-    eyebrow: 'MAX Life Real Estate',
-    titleLine1: 'Find your next',
-    titleLine2: 'Property',
-    description: 'Browse curated projects and get connected for a site visit.',
-    image: { src: '/assets/House-1.png', alt: 'Property illustration' },
-    form: {
-      placeholder: 'Enter your email',
-      buttonIdle: 'Subscribe',
-      buttonLoading: 'Sending…',
-      sourceLabel: 'Hero: Newsletter subscription',
-    },
-  }
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [_success, setSuccess] = useState(false)
-  const [_error, setError] = useState('')
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    setError('')
-    setSuccess(false)
-    setLoading(true)
-    const source = data?.form.sourceLabel ?? 'Hero: Newsletter subscription'
-    const result = await submitSubscribeEmail(email, source)
-    setLoading(false)
-    if (result.success) {
-      setSuccess(true)
-      setEmail('')
-      toast.success("Thanks! We'll be in touch.")
-    } else {
-      setError(result.message || 'Something went wrong.')
-      toast.error(result.message || 'Something went wrong.')
-    }
-  }
+  const [mode, setMode] = useState<'rent' | 'sell'>('rent')
 
   return (
-    <section className="px-3 sm:px-6 py-4 pb-20 sm:pb-24 lg:pb-28 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">
-      <div
-        className="rounded-2xl sm:rounded-[18px] overflow-visible flex flex-col lg:flex-row flex-wrap items-end justify-between gap-6 lg:gap-8 py-5 px-4 sm:py-6 sm:px-8 lg:py-8 lg:px-12 min-h-0 w-full box-border shadow-[4px_4px_20px_rgba(0,0,0,0.06)]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"), linear-gradient(90deg, #c8dceb 0%, #ecd9c9 100%)`,
-        }}
-      >
-        {/* Left: text + email subscribe */}
-        <div className="flex-1 min-w-0 w-full max-w-md flex flex-col justify-center self-center">
-          <p className="m-0 mb-2 sm:mb-3 text-sm font-normal text-black">{data.eyebrow}</p>
-          <h1 className="m-0 mb-4 sm:mb-5 text-[clamp(1.875rem,5vw,3.75rem)] font-bold leading-[1.08] tracking-tight text-black">
-            {data.titleLine1}
-            <br />
-            {data.titleLine2}
-          </h1>
-          <p className="m-0 mb-6 sm:mb-8 text-sm sm:text-base font-normal leading-relaxed text-black/90 max-w-full">
-            {data.description}
+    <section className="landing-hero">
+      <div className="landing-hero__grid">
+        <div className="landing-hero__panel">
+          <h1 className="landing-hero__title">Find your next dream home</h1>
+          <p className="landing-hero__text">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Vestibulum ante ipsum primis in
+            faucibus orci luctus et ultrices posuere cubilia Curae.
           </p>
-          <form
-            className="flex flex-col sm:flex-row gap-2 sm:gap-0 w-full max-w-md rounded-xl overflow-hidden border border-gray-300 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-            onSubmit={handleSubmit}
-            aria-label="Subscribe by email"
-          >
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className="w-full flex-1 min-w-0 min-h-[44px] h-11 sm:h-12 pl-4 pr-4 font-sans text-base text-black bg-white border-0 outline-none placeholder:text-gray-500 rounded-xl sm:rounded-none sm:rounded-l-xl disabled:opacity-70"
-              placeholder={data.form.placeholder}
-              aria-label="Email address"
-              autoComplete="email"
-              required
-            />
+
+          <div className="landing-hero__toggle" role="tablist" aria-label="Listing type">
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full cursor-pointer sm:w-auto h-11 sm:h-12 min-h-[44px] px-6 shrink-0 text-base font-medium text-white bg-gray-900 border-0 hover:bg-black rounded-xl sm:rounded-none sm:rounded-r-xl disabled:opacity-70 disabled:cursor-not-allowed"
+              type="button"
+              role="tab"
+              aria-selected={mode === 'rent'}
+              className={`landing-hero__toggle-btn${mode === 'rent' ? ' landing-hero__toggle-btn--active' : ''}`}
+              onClick={() => setMode('rent')}
             >
-              {loading ? data.form.buttonLoading : data.form.buttonIdle}
+              Rent
             </button>
-          </form>
-        </div>
-        {/* Right: 3D house illustration */}
-        <div className="flex-1 min-w-0 w-full max-w-[720px] flex items-end justify-center lg:justify-end shrink-0 overflow-visible order-first lg:order-0">
-          <div className="w-full max-w-[680px] overflow-visible rounded-tr-3xl rounded-bl-3xl rounded-tl-md rounded-br-md -mb-12 lg:-mb-20">
-            <img
-              src={data.image.src}
-              alt={data.image.alt}
-              className="w-full h-auto object-contain object-right drop-shadow-[0_12px_32px_rgba(0,0,0,0.08)] block"
-            />
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === 'sell'}
+              className={`landing-hero__toggle-btn${mode === 'sell' ? ' landing-hero__toggle-btn--active' : ''}`}
+              onClick={() => setMode('sell')}
+            >
+              Sell
+            </button>
           </div>
+
+          <div className="landing-hero__search">
+            <span className="landing-hero__search-type">Property Type</span>
+            <input
+              type="search"
+              className="landing-hero__search-input"
+              placeholder="Search by location or property ID....."
+              aria-label="Search properties"
+            />
+            <button type="button" className="landing-btn landing-btn--primary landing-btn--sm">
+              Buy Now
+            </button>
+          </div>
+
+          <div className="landing-hero__checks">
+            <label className="landing-hero__check">
+              <input type="checkbox" defaultChecked />
+              Only Properties in exclusive representation
+            </label>
+            <label className="landing-hero__check">
+              <input type="checkbox" />
+              Only new development
+            </label>
+          </div>
+        </div>
+
+        <div className="landing-hero__visual">
+          <img
+            src="/assets/House-1.png"
+            alt="Modern property exterior"
+            onError={(e) => {
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="landing-container landing-hero-cards">
+        <div className="landing-hero-cards__grid">
+          {HERO_CARDS.map((card) => (
+            <article key={card.title} className="landing-hero-card">
+              <div className="landing-hero-card__icon-wrap">
+                <img src={card.icon} alt="" className="landing-hero-card__icon" aria-hidden />
+              </div>
+              <h3 className="landing-hero-card__title">{card.title}</h3>
+              <div className="landing-hero-card__line" aria-hidden />
+            </article>
+          ))}
         </div>
       </div>
     </section>
   )
-}
-
-type HeroPayload = {
-  eyebrow: string
-  titleLine1: string
-  titleLine2: string
-  description: string
-  image: { src: string; alt: string }
-  form: { placeholder: string; buttonIdle: string; buttonLoading: string; sourceLabel: string }
 }
 
 export default Hero

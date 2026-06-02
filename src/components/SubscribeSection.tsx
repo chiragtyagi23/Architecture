@@ -1,109 +1,171 @@
 import { useState, type FormEvent } from 'react'
 import toast from 'react-hot-toast'
-import { submitSubscribeEmail } from '../utils/web3forms'
+
+const LEADS_API_BASE_URL =
+  (process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_API_BASE_URL || '').trim() || 'http://localhost:4000'
 
 function SubscribeSection() {
-  const data: SubscribePayload = {
-    title: 'Stay in the loop',
-    body: 'Subscribe to get updates on new listings and launches.',
-    image: { src: '/assets/House-5.png', alt: 'Newsletter' },
+  const data: EnquiryPayload = {
+    title: 'Enquiry form',
+    body: 'Share your details and our team will contact you shortly.',
     form: {
-      placeholder: 'Enter your email',
-      buttonIdle: 'Notify me',
-      buttonLoading: 'Sending…',
-      sourceLabel: 'Subscribe Now: Newsletter',
+      buttonIdle: 'Submit enquiry',
+      buttonLoading: 'Submitting…',
+      sourceLabel: 'website',
     },
   }
+
+  const [name, setName] = useState('')
+  const [number, setNumber] = useState('')
   const [email, setEmail] = useState('')
+  const [bhk, setBhk] = useState('')
+  const [budget, setBudget] = useState('')
   const [loading, setLoading] = useState(false)
-  const [_success, setSuccess] = useState(false)
-  const [_error, setError] = useState('')
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setError('')
-    setSuccess(false)
+    if (!name.trim() || !number.trim()) {
+      toast.error('Please enter name and phone number.')
+      return
+    }
+
     setLoading(true)
-    const source = data?.form.sourceLabel ?? 'Subscribe Now: Newsletter'
-    const result = await submitSubscribeEmail(email, source)
-    setLoading(false)
-    if (result.success) {
-      setSuccess(true)
+    try {
+      const res = await fetch(`${LEADS_API_BASE_URL}/api/capture-leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim(),
+          number: number.trim(),
+          email: email.trim() || null,
+          bhk: bhk || null,
+          budget: budget || null,
+          campaignId: null,
+          preferredLocation: [],
+          source: data.form.sourceLabel,
+        }),
+      })
+
+      if (!res.ok) {
+        toast.error('Could not submit enquiry. Please try again.')
+        return
+      }
+
+      setName('')
+      setNumber('')
       setEmail('')
-      toast.success("Thanks! You're subscribed.")
-    } else {
-      setError(result.message || 'Something went wrong.')
-      toast.error(result.message || 'Something went wrong.')
+      setBhk('')
+      setBudget('')
+      toast.success('Enquiry submitted. Lead captured in CRM.')
+    } catch {
+      toast.error('Network error. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <section className="px-4 sm:px-6 pb-24 sm:pb-36 max-w-[min(1600px,96vw)] mx-auto w-full box-border overflow-visible">
-      <div
-        className="rounded-2xl sm:rounded-[18px] overflow-visible grid grid-cols-1 lg:grid-cols-[1fr_780px] gap-4 lg:gap-6 items-end py-5 px-4 sm:py-5 sm:px-8 lg:py-6 lg:px-12 w-full box-border shadow-[4px_4px_20px_rgba(0,0,0,0.06)]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E"), linear-gradient(90deg, #b8d4e8 0%, #e8d0bc 100%)`,
-        }}
-      >
-        <div className="flex flex-col justify-center min-h-full py-4 lg:py-0">
-          <div className="max-w-xl min-w-0">
-            <h2 className="m-0 mb-2 sm:mb-3 text-[clamp(1.375rem,2.5vw,2rem)] font-bold leading-tight text-black text-left">
-              {data.title}
-            </h2>
-            <p className="m-0 mb-4 sm:mb-5 text-sm sm:text-[0.9375rem] font-normal leading-relaxed text-black/90 text-left">
-              {data.body}
-            </p>
-            <form
-            className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full max-w-lg"
-            onSubmit={handleSubmit}
-            aria-label="Subscribe by email"
-          >
-            <input
-              type="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              className="w-full flex-1 min-w-0 min-h-[44px] h-10 sm:h-10 pl-4 pr-4 font-sans text-base text-gray-900 bg-white border border-gray-200 rounded-xl outline-none shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)] placeholder:text-gray-400 sm:rounded-r-none disabled:opacity-70"
-              placeholder={data.form.placeholder}
-              aria-label="Email address"
-              autoComplete="email"
-              required
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full sm:w-auto min-h-[44px] h-10 px-5 font-sans text-sm font-bold text-white bg-gray-900 border-0 rounded-xl cursor-pointer hover:bg-gray-800 shrink-0 sm:rounded-l-none disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {loading ? data.form.buttonLoading : data.form.buttonIdle}
-            </button>
+    <section className="landing-subscribe-wrap" id="contact">
+      <div className="landing-container">
+        <div className="landing-subscribe-card">
+          <h2 className="landing-subscribe-card__title">{data.title}</h2>
+          <p className="landing-subscribe-card__subtitle">{data.body}</p>
+          <form className="landing-subscribe-card__form" onSubmit={handleSubmit} aria-label="Enquiry form">
+            <div className="landing-subscribe-card__field">
+              <label htmlFor="enquiry-name">Full name</label>
+              <input
+                id="enquiry-name"
+                type="text"
+                name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={loading}
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+            <div className="landing-subscribe-card__field">
+              <label htmlFor="enquiry-phone">Phone number</label>
+              <input
+                id="enquiry-phone"
+                type="tel"
+                name="phone"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+                disabled={loading}
+                placeholder="Enter your phone number"
+                required
+              />
+            </div>
+            <div className="landing-subscribe-card__field">
+              <label htmlFor="enquiry-email">Email (optional)</label>
+              <input
+                id="enquiry-email"
+                type="email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                placeholder="Enter your email"
+                autoComplete="email"
+              />
+            </div>
+            <div className="landing-subscribe-card__field">
+              <label htmlFor="enquiry-bhk">BHK</label>
+              <select
+                className="landing-subscribe-card__select"
+                id="enquiry-bhk"
+                name="bhk"
+                value={bhk}
+                onChange={(e) => setBhk(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">Select BHK</option>
+                <option value="1 BHK">1 BHK</option>
+                <option value="2 BHK">2 BHK</option>
+                <option value="3 BHK">3 BHK</option>
+                <option value="4 BHK">4 BHK</option>
+              </select>
+            </div>
+            <div className="landing-subscribe-card__field">
+              <label htmlFor="enquiry-budget">Budget</label>
+              <select
+                className="landing-subscribe-card__select"
+                id="enquiry-budget"
+                name="budget"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">Select budget</option>
+                <option value="45-55 Lakhs">45-55 Lakhs</option>
+                <option value="65-75 Lakhs">65-75 Lakhs</option>
+                <option value="75-85 Lakhs">75-85 Lakhs</option>
+                <option value="90 Lakhs - 1 Cr">90 Lakhs - 1 Cr</option>
+                <option value="1-1.2 Crores">1-1.2 Crores</option>
+              </select>
+            </div>
+            <div className="landing-subscribe-card__field">
+              <label htmlFor="enquiry-source">Source</label>
+              <input id="enquiry-source" className="landing-subscribe-card__readonly" type="text" value={data.form.sourceLabel} disabled />
+            </div>
+            <div className="landing-subscribe-card__actions">
+              <button type="submit" className="landing-btn landing-btn--primary landing-btn--full" disabled={loading}>
+                {loading ? data.form.buttonLoading : data.form.buttonIdle}
+              </button>
+              <p className="landing-subscribe-card__note">This form creates a CRM lead with source set to &quot;website&quot;.</p>
+            </div>
           </form>
-          </div>
-        </div>
-        <div
-          className="flex justify-end items-end w-full min-h-[280px] lg:min-h-0 overflow-visible pr-0 pl-0"
-          style={{ minWidth: 'min(100%, 780px)' }}
-        >
-          <div
-            className="w-full max-w-[400px] lg:max-w-none lg:w-[780px] lg:h-[460px] h-[260px] overflow-visible rounded-tr-3xl rounded-bl-3xl rounded-tl-md rounded-br-md lg:-mb-20 -mb-12 lg:translate-x-40 translate-x-4"
-          >
-            <img
-              src={data.image.src}
-              alt={data.image.alt}
-              className="w-full h-full object-contain object-center drop-shadow-[0_12px_32px_rgba(0,0,0,0.08)] block"
-            />
-          </div>
         </div>
       </div>
     </section>
   )
 }
 
-type SubscribePayload = {
+type EnquiryPayload = {
   title: string
   body: string
-  image: { src: string; alt: string }
-  form: { placeholder: string; buttonIdle: string; buttonLoading: string; sourceLabel: string }
+  form: { buttonIdle: string; buttonLoading: string; sourceLabel: string }
 }
 
 export default SubscribeSection

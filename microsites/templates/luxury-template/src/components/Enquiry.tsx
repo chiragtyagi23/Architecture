@@ -66,10 +66,10 @@ export function Enquiry() {
         name: 'bhk',
         options: [
           { value: '', label: 'Select' },
-          { value: '1', label: '1 BHK' },
-          { value: '2', label: '2 BHK' },
-          { value: '3', label: '3 BHK' },
-          { value: '4', label: '4 BHK' },
+          { value: '1 BHK', label: '1 BHK' },
+          { value: '2 BHK', label: '2 BHK' },
+          { value: '3 BHK', label: '3 BHK' },
+          { value: '4 BHK', label: '4 BHK' },
         ],
       },
       budgetField: {
@@ -78,10 +78,11 @@ export function Enquiry() {
         name: 'budget',
         options: [
           { value: '', label: 'Select' },
-          { value: 'under_50', label: 'Under 50L' },
-          { value: '50_100', label: '50L – 1Cr' },
-          { value: '100_150', label: '1Cr – 1.5Cr' },
-          { value: '150_plus', label: '1.5Cr+' },
+          { value: '45-55 Lakhs', label: '45-55 Lakhs' },
+          { value: '65-75 Lakhs', label: '65-75 Lakhs' },
+          { value: '75-85 Lakhs', label: '75-85 Lakhs' },
+          { value: '90 Lakhs - 1 Cr', label: '90 Lakhs - 1 Cr' },
+          { value: '1-1.2 Crores', label: '1-1.2 Crores' },
         ],
       },
       submitLabel: 'Submit',
@@ -91,9 +92,36 @@ export function Enquiry() {
   }
   const error: string | null = null
 
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const form = e.currentTarget
+    const fd = new FormData(form)
+    const name = String(fd.get('name') ?? '').trim()
+    const number = String(fd.get('phone') ?? '').trim()
+    const bhk = String(fd.get('bhk') ?? '').trim()
+    const budget = String(fd.get('budget') ?? '').trim()
+    const campaignId = String(selected?.id ?? '').trim() || null
+
+    if (!name || !number) {
+      window.alert('Please enter name and phone.')
+      return
+    }
+
+    await fetch('http://localhost:4000/api/capture-leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        number,
+        bhk: bhk || null,
+        budget: budget || null,
+        campaignId,
+        preferredLocation: [],
+      }),
+    })
+
     window.alert('Thank you! Our team will contact you within 24 hours.')
+    form.reset()
   }
 
   if (error) {

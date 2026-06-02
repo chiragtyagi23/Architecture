@@ -1,53 +1,31 @@
-type FeaturesPayload = {
-  eyebrow: string
-  title: string
-  items: { title: string; description: string; icon: { src: string; alt?: string } }[]
-}
-
-const FEATURES: FeaturesPayload = {
-  eyebrow: 'WHY CHOOSE US',
-  title: 'Everything you need to find the right property',
-  items: [
-    {
-      title: 'Verified listings',
-      description: 'Curated inventory with key details and clear next steps.',
-      icon: { src: '/assets/messages.svg', alt: 'Verified' },
-    },
-    {
-      title: 'Transparent pricing',
-      description: 'Compare configurations and pricing without hidden surprises.',
-      icon: { src: '/assets/edit-2.svg', alt: 'Pricing' },
-    },
-    {
-      title: 'Expert guidance',
-      description: 'Get help from our team for site visits, documents, and closures.',
-      icon: { src: '/assets/sms-tracking.svg', alt: 'Support' },
-    },
-  ],
-}
-
 function Features() {
-  const data = FEATURES
-
   return (
-    <section className="bg-white py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-      <div className="max-w-[min(1600px,96vw)] mx-auto px-4 sm:pl-8 md:pl-12 text-center w-full box-border">
-        <p className="m-0 mb-2 text-sm font-normal text-gray-600">{data.eyebrow}</p>
-        <h2 className="m-0 mb-10 sm:mb-12 md:mb-16 text-[clamp(1.5rem,3vw,2.5rem)] font-bold leading-tight text-gray-900">
-          {data.title}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 md:gap-12 items-start">
-          {data.items.map((item, i) => (
-            <article key={i} className="m-0 text-left">
-              <div className="flex items-center justify-start w-12 h-12 sm:w-14 sm:h-14 mb-4 sm:mb-6">
-                <img src={item.icon.src} alt={item.icon.alt ?? ''} className="w-12 h-12 sm:w-14 sm:h-14" aria-hidden />
-              </div>
-              <h3 className="m-0 mb-3 sm:mb-4 text-base sm:text-lg font-bold text-gray-900">{item.title}</h3>
-              <p className="m-0 text-sm sm:text-base font-normal leading-relaxed text-gray-600 max-w-[20rem]">
-                {item.description}
-              </p>
-            </article>
-          ))}
+    <section className="landing-section">
+      <div className="landing-container landing-services__grid">
+        <div>
+          <p className="landing-eyebrow">Our Services</p>
+          <h2 className="landing-heading">We’re Here To Help You To Find Your Dream House.</h2>
+          <p className="landing-body" style={{ marginTop: '1rem', maxWidth: '575px' }}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Vestibulum ante ipsum primis in
+            faucibus orci luctus et ultrices posuere cubilia Curae.
+          </p>
+          <ul className="landing-services__list">
+            <li>Property management</li>
+            <li>Construction Services</li>
+            <li>Online Services</li>
+          </ul>
+        </div>
+        <div className="landing-services__images">
+          <img
+            className="landing-services__img-back"
+            src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=800&q=80"
+            alt="Luxury building"
+          />
+          <img
+            className="landing-services__img-front"
+            src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80"
+            alt="Modern apartment"
+          />
         </div>
       </div>
     </section>
