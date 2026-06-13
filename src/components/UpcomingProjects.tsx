@@ -38,9 +38,7 @@ function UpcomingProjects() {
     <section className="landing-section landing-section--properties">
       <div className="landing-container">
         <div className="landing-section-header">
-          <div>
-            <h2 className="landing-heading">Best recommendation</h2>
-          </div>
+          <h2 className="landing-heading">Best recommendation</h2>
           <Link className="landing-link-explore" href="/projects">
             Explore All
           </Link>

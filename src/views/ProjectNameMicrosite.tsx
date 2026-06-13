@@ -7,10 +7,11 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 
 type Props = {
   id?: string
+  slug?: string
   templateOverride?: string
 }
 
-export default function ProjectNameMicrosite({ id, templateOverride }: Props) {
+export default function ProjectNameMicrosite({ id, slug, templateOverride }: Props) {
   const dispatch = useAppDispatch()
   const selectedId = useAppSelector((s) => (s as any).campaigns.selectedId) as string | null
   const selected = useAppSelector((s) => (s as any).campaigns.selected)
@@ -22,15 +23,6 @@ export default function ProjectNameMicrosite({ id, templateOverride }: Props) {
     if (!id) return
     dispatch(fetchCampaignById(id))
   }, [dispatch, id])
-
-  React.useEffect(() => {
-    if (!id) return
-    // Debug: inspect what we received from backend/store for this campaign.
-    console.log('[Microsite] route campaign id:', id)
-    console.log('[Microsite] selectedId:', selectedId)
-    console.log('[Microsite] selectedError:', selectedError)
-    console.log('[Microsite] selected (raw):', selected)
-  }, [id, selected, selectedError, selectedId])
 
   if (!id) {
     return (
@@ -62,16 +54,15 @@ export default function ProjectNameMicrosite({ id, templateOverride }: Props) {
     return typeof key === 'string' ? key.toLowerCase() : ''
   })()
 
-  console.log('[Microsite] resolvedTemplate:', resolvedTemplate, 'override:', templateOverrideKey)
+  const basePath = slug ? `/${slug}` : '/project-name'
 
   return resolvedTemplate === 'affordable' ||
     resolvedTemplate === 'affordable-template' ||
     resolvedTemplate === 'template-2' ? (
     <AffordableMicrositeApp selected={selected} />
   ) : (
-    <TemplateBasePathProvider basePath="/project-name">
+    <TemplateBasePathProvider basePath={basePath}>
       <LuxuryMicrositeApp selected={selected} />
     </TemplateBasePathProvider>
   )
 }
-

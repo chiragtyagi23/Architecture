@@ -50,9 +50,6 @@ function Header({ onOpenContact }: Props) {
         </div>
 
         <div className="landing-header__actions">
-          <button type="button" className="landing-btn landing-btn--outline landing-btn--header">
-            Login
-          </button>
           <button type="button" className="landing-btn landing-btn--primary landing-btn--header" onClick={openContact}>
             Contact us
           </button>
@@ -86,9 +83,6 @@ function Header({ onOpenContact }: Props) {
           </Link>
         ))}
         <div className="landing-header__mobile-actions">
-          <button type="button" className="landing-btn landing-btn--outline landing-btn--header">
-            Login
-          </button>
           <button type="button" className="landing-btn landing-btn--primary landing-btn--header" onClick={openContact}>
             Contact us
           </button>

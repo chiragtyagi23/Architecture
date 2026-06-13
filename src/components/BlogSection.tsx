@@ -11,9 +11,9 @@ function BlogSection() {
   return (
     <section className="landing-section landing-section--blog" id="blog">
       <div className="landing-container">
-        <div className="landing-section-header landing-section-header--blog">
+        <div className="landing-section-header">
           <h2 className="landing-heading landing-heading--blog">See our latest news & read blog</h2>
-          <Link href="/blogs" className="landing-link-explore landing-link-explore--with-arrow">
+          <Link href="/blogs" className="landing-link-explore">
             Explore All
             <svg width="46" height="46" viewBox="0 0 46 46" fill="none" aria-hidden>
               <path d="M18 12l10 11-10 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

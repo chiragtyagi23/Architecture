@@ -1,26 +1,27 @@
 'use client'
 
 import { Suspense } from 'react'
-import MicrositeLayout from '../../../layouts/MicrositeLayout'
-import ProjectNameMicrosite from '../../../views/ProjectNameMicrosite'
 import { useParams, useSearchParams } from 'next/navigation'
 
-function ProjectNameByIdClient() {
-  const params = useParams<{ id: string }>()
+import MicrositeLayout from '../../../layouts/MicrositeLayout'
+import ProjectNameMicrosite from '../../../views/ProjectNameMicrosite'
+
+function SlugCampaignPageClient() {
+  const params = useParams<{ slug: string; id: string }>()
   const searchParams = useSearchParams()
   const template = searchParams?.get('template') ?? undefined
 
   return (
     <MicrositeLayout>
-      <ProjectNameMicrosite id={params?.id} templateOverride={template} />
+      <ProjectNameMicrosite id={params?.id} slug={params?.slug} templateOverride={template} />
     </MicrositeLayout>
   )
 }
 
-export default function Page() {
+export default function SlugCampaignPage() {
   return (
     <Suspense>
-      <ProjectNameByIdClient />
+      <SlugCampaignPageClient />
     </Suspense>
   )
 }

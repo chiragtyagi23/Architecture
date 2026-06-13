@@ -108,4 +108,3 @@ const campaignsSlice = createSlice({
 
 export const campaignsActions = campaignsSlice.actions
 export const campaignsReducer = campaignsSlice.reducer
-

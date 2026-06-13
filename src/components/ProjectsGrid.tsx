@@ -1,5 +1,9 @@
 import type { CampaignRow } from '../store/campaignsSlice'
 
+function campaignSlug(title: string): string {
+  return title.trim().toLowerCase().replace(/\s+/g, '-')
+}
+
 type Props = {
   campaigns: CampaignRow[]
   loading?: boolean
@@ -38,7 +42,7 @@ function ProjectsGrid({ campaigns, loading = false, skeletonCount = 4, limit }: 
                   type="button"
                   className={`landing-property-card__book ${idx === 0 ? 'landing-property-card__book--fill' : 'landing-property-card__book--outline'}`}
                   onClick={() => {
-                    const path = `/project-name/${row.id}?template=${encodeURIComponent(templateKey)}`
+                    const path = `/${campaignSlug(title)}/${row.id}?template=${encodeURIComponent(templateKey)}`
                     window.open(path, '_blank', 'noopener,noreferrer')
                   }}
                 >

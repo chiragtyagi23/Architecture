@@ -679,6 +679,11 @@
   font-size: 24px;
   font-weight: 400;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+.landing-link-explore:hover {
+  color: var(--brand);
 }
 
 .landing-link-explore svg {
@@ -698,6 +703,22 @@
   font-size: clamp(2rem, 3.82vw, 55px);
   font-weight: 700;
   color: #000;
+}
+
+.landing-section:has(.landing-properties__grid) .landing-section-header,
+.landing-section--properties .landing-section-header {
+  align-items: center;
+}
+
+.landing-section:has(.landing-properties__grid) .landing-link-explore,
+.landing-section--properties .landing-link-explore {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.landing-section:has(.landing-properties__grid) .landing-link-explore:hover,
+.landing-section--properties .landing-link-explore:hover {
+  color: var(--brand-dark);
 }
 
 .landing-body--empty {
@@ -720,6 +741,19 @@
   font-size: clamp(1.75rem, 3.2vw, 46px);
   font-weight: 600;
   max-width: 735px;
+}
+
+.landing-section--blog .landing-section-header {
+  align-items: center;
+}
+
+.landing-section--blog .landing-link-explore {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+.landing-section--blog .landing-link-explore:hover {
+  color: var(--brand-dark);
 }
 
 /* ── Services (Figma @ 1440: text x≈102, imgs 732/850, 506×516) ── */
@@ -1112,7 +1146,7 @@
   flex: 0 0 365px;
   width: 365px;
   background: #fff;
-  border-radius: 15px 15px 0 0;
+  border-radius: 0;
   box-shadow: 0 4px 12.6px rgba(0, 0, 0, 0.25);
   overflow: hidden;
   scroll-snap-align: start;
@@ -1548,7 +1582,7 @@
   width: 365px;
   height: 476px;
   background: #f0f0f0;
-  border-radius: 15px 15px 0 0;
+  border-radius: 0;
   animation: landing-pulse 1.2s ease-in-out infinite;
 }
 
