@@ -35,7 +35,7 @@ function UpcomingProjects() {
   }
 
   return (
-    <section className="landing-section">
+    <section className="landing-section landing-section--properties">
       <div className="landing-container">
         <div className="landing-section-header">
           <div>
@@ -45,7 +45,12 @@ function UpcomingProjects() {
             Explore All
           </Link>
         </div>
-        <ProjectsGrid campaigns={campaigns} loading={loading} limit={4} skeletonCount={4} />
+
+        {!loading && campaigns.length === 0 ? (
+          <p className="landing-body landing-body--empty">No projects available right now. Please check back soon.</p>
+        ) : (
+          <ProjectsGrid campaigns={campaigns} loading={loading} limit={4} skeletonCount={4} />
+        )}
       </div>
     </section>
   )

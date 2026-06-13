@@ -84,7 +84,7 @@ const campaignsSlice = createSlice({
       })
       .addCase(fetchCampaigns.fulfilled, (state, action) => {
         state.loading = false
-        state.items = action.payload
+        state.items = Array.isArray(action.payload) ? action.payload : []
       })
       .addCase(fetchCampaigns.rejected, (state, action) => {
         state.loading = false

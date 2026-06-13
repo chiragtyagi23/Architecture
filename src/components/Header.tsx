@@ -8,7 +8,6 @@ const navLinks = [
   { href: '/projects', label: 'Projects' },
   { href: '/property', label: 'Property' },
   { href: '/blogs', label: 'Blogs' },
-  { href: '/#contact', label: 'Enquiry' },
 ]
 
 type Props = {
@@ -27,32 +26,34 @@ function Header({ onOpenContact }: Props) {
   return (
     <header className="landing-header">
       <div className="landing-container landing-header__inner">
-        <Link href="/" aria-label="Home">
-          <img
-            className="landing-header__logo"
-            src="https://placehold.co/80x80/3E51FF/FFFFFF?text=RE"
-            alt="Real estate logo"
-          />
-        </Link>
+        <div className="landing-header__left">
+          <Link href="/" className="landing-header__logo-link" aria-label="Home">
+            <img
+              className="landing-header__logo"
+              src="/assets/header-logo.png"
+              alt="Real estate logo"
+            />
+          </Link>
 
-        <nav className="landing-header__nav" aria-label="Main">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`landing-header__link${pathname === link.href ? ' landing-header__link--active' : ''}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+          <nav className="landing-header__nav" aria-label="Main">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`landing-header__link${pathname === link.href ? ' landing-header__link--active' : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
         <div className="landing-header__actions">
-          <button type="button" className="landing-btn landing-btn--outline landing-btn--sm">
+          <button type="button" className="landing-btn landing-btn--outline landing-btn--header">
             Login
           </button>
-          <button type="button" className="landing-btn landing-btn--primary landing-btn--sm" onClick={openContact}>
+          <button type="button" className="landing-btn landing-btn--primary landing-btn--header" onClick={openContact}>
             Contact us
           </button>
         </div>
@@ -84,11 +85,11 @@ function Header({ onOpenContact }: Props) {
             {link.label}
           </Link>
         ))}
-        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-          <button type="button" className="landing-btn landing-btn--outline landing-btn--sm">
+        <div className="landing-header__mobile-actions">
+          <button type="button" className="landing-btn landing-btn--outline landing-btn--header">
             Login
           </button>
-          <button type="button" className="landing-btn landing-btn--primary landing-btn--sm" onClick={openContact}>
+          <button type="button" className="landing-btn landing-btn--primary landing-btn--header" onClick={openContact}>
             Contact us
           </button>
         </div>

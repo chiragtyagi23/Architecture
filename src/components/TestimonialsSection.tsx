@@ -1,3 +1,5 @@
+const TESTIMONIAL_AVATAR = '/assets/testimonial-avatar.png'
+
 const TESTIMONIALS = [
   { name: 'Ariyana aly', role: 'Top Customer' },
   { name: 'Ariyana aly', role: 'Top Customer' },
@@ -7,19 +9,21 @@ const TESTIMONIALS = [
 function TestimonialsSection() {
   return (
     <section className="landing-testimonials">
-      <div className="landing-container" style={{ position: 'relative' }}>
-        <img
-          className="landing-testimonials__banner"
-          src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1400&q=80"
-          alt="Happy homeowners"
-        />
-        <h2 className="landing-testimonials__overlay-title">See what our customers said about us</h2>
+      <div className="landing-container landing-testimonials__inner">
+        <div className="landing-testimonials__banner-wrap">
+          <img
+            className="landing-testimonials__banner"
+            src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1400&q=80"
+            alt="Happy homeowners"
+          />
+          <h2 className="landing-testimonials__overlay-title">See what our customers said about us</h2>
+        </div>
 
         <div className="landing-testimonials__cards">
           {TESTIMONIALS.map((item, idx) => (
             <article key={idx} className="landing-testimonial-card">
               <div className="landing-testimonial-card__head">
-                <img className="landing-testimonial-card__avatar" src="https://placehold.co/91x91" alt={item.name} />
+                <img className="landing-testimonial-card__avatar" src={TESTIMONIAL_AVATAR} alt={item.name} />
                 <div>
                   <p className="landing-testimonial-card__name">{item.name}</p>
                   <p className="landing-testimonial-card__role">{item.role}</p>

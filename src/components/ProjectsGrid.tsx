@@ -14,11 +14,11 @@ function ProjectsGrid({ campaigns, loading = false, skeletonCount = 4, limit }: 
     <div className="landing-properties__grid">
       {rows.map((row, idx) => {
         if (typeof row === 'number') {
-          return <div key={row} className="landing-skeleton" style={{ height: '420px' }} aria-hidden />
+          return <div key={row} className="landing-skeleton" aria-hidden />
         }
 
         const title = row.title
-        const description = row.desc ?? row.address ?? ''
+        const location = row.address ?? row.desc ?? ''
         const coverImage = row.coverImage ?? row.logo ?? 'https://placehold.co/800x600?text=Cover'
         const templateKey = typeof row.templateKey === 'string' ? row.templateKey : 'luxury-template'
 
@@ -26,13 +26,13 @@ function ProjectsGrid({ campaigns, loading = false, skeletonCount = 4, limit }: 
           <article key={row.id} className="landing-property-card">
             <img className="landing-property-card__img" src={coverImage} alt={title} />
             <div className="landing-property-card__body">
-              <h3 className="landing-property-card__location">{title}</h3>
-              <p style={{ margin: '0 0 0.75rem', color: '#444', fontSize: '0.95rem' }}>{description}</p>
-              <div className="landing-property-card__meta">
-                <span>8 Bed</span>
-                <span>10*10</span>
-                <span>6 Room</span>
-              </div>
+              <h3 className="landing-property-card__title">{title}</h3>
+              {location ? (
+                <p className="landing-property-card__location">
+                  <span className="landing-property-card__pin" aria-hidden />
+                  {location}
+                </p>
+              ) : null}
               <div className="landing-property-card__footer">
                 <button
                   type="button"
@@ -44,7 +44,6 @@ function ProjectsGrid({ campaigns, loading = false, skeletonCount = 4, limit }: 
                 >
                   Book now
                 </button>
-                <strong className="landing-property-card__price">$5,200,00</strong>
               </div>
             </div>
           </article>
