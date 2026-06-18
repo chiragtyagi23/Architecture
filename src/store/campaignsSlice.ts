@@ -8,7 +8,7 @@ export type CampaignRow = {
   logo: string | null
   coverImage?: string | null
   regNo: string | null
-  templateKey?: 'luxury-template' | 'affordable-template'
+  templateKey?: 'default-template' | 'luxury-template' | 'affordable-template'
   created_at?: string
   updated_at?: string
 }
@@ -16,7 +16,7 @@ export type CampaignRow = {
 export type CampaignFull = {
   id: string
   title: string
-  templateKey?: 'luxury-template' | 'affordable-template'
+  templateKey?: 'default-template' | 'luxury-template' | 'affordable-template'
 } & Record<string, unknown>
 
 function apiBase(): string {

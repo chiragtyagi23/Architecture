@@ -2,6 +2,7 @@ import * as React from 'react'
 import LuxuryMicrositeApp from '../../microsites/templates/luxury-template/src/App'
 import { TemplateBasePathProvider } from '../../microsites/templates/luxury-template/src/lib/basePath'
 import AffordableMicrositeApp from '../../microsites/templates/affordable-template/src/App'
+import DefaultMicrositeApp from '../../microsites/templates/default-template/src/App'
 import { fetchCampaignById } from '../store/campaignsSlice'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 
@@ -56,11 +57,22 @@ export default function ProjectNameMicrosite({ id, slug, templateOverride }: Pro
 
   const basePath = slug ? `/${slug}` : '/project-name'
 
-  return resolvedTemplate === 'affordable' ||
+  const isAffordable =
+    resolvedTemplate === 'affordable' ||
     resolvedTemplate === 'affordable-template' ||
-    resolvedTemplate === 'template-2' ? (
-    <AffordableMicrositeApp selected={selected} />
-  ) : (
+    resolvedTemplate === 'template-2'
+
+  const isDefault = resolvedTemplate === 'default' || resolvedTemplate === 'default-template'
+
+  if (isAffordable) {
+    return <AffordableMicrositeApp selected={selected} />
+  }
+
+  if (isDefault) {
+    return <DefaultMicrositeApp selected={selected} />
+  }
+
+  return (
     <TemplateBasePathProvider basePath={basePath}>
       <LuxuryMicrositeApp selected={selected} />
     </TemplateBasePathProvider>
