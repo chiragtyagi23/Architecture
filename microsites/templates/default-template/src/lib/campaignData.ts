@@ -18,20 +18,33 @@ export type CampaignViewModel = {
   galleryImages: { src: string; alt: string }[]
   facts: { key: string; value: string }[]
   amenities: { name: string; icons: string[] }[]
+  benefits: { title: string; description: string }[]
   highlights: { title: string; description: string }[]
   benefitStats: { label: string; value: string }[]
-  floorRows: { tab: string; configuration: string; carpetArea: string; floorRange: string; price: string }[]
+  heroStats: { label: string; value: string }[]
+  floorTabs: { id: string; label: string; rows: FloorRow[]; images: string[] }[]
+  floorRows: FloorRow[]
   floorPlanImages: string[]
+  socialInfraGroups: { title: string; items: { name: string; value: string }[] }[]
   videos: { url: string; label: string }[]
   showBanner: boolean
   showGallery: boolean
   showFacts: boolean
   showAmenities: boolean
+  showBenefits: boolean
   showHighlights: boolean
   showStats: boolean
   showFloorPlans: boolean
+  showLocation: boolean
   showVideos: boolean
-  showSummaryChips: boolean
+}
+
+export type FloorRow = {
+  tab: string
+  configuration: string
+  carpetArea: string
+  floorRange: string
+  price: string
 }
 
 function bannerUrls(selected?: unknown): string[] {
@@ -103,7 +116,8 @@ function floorData(selected?: unknown) {
   const tabs = Array.isArray(sizeFloor?.tabs) ? sizeFloor.tabs : []
   const panels = sizeFloor?.panels && typeof sizeFloor.panels === 'object' ? sizeFloor.panels : {}
 
-  const rows: CampaignViewModel['floorRows'] = []
+  const floorTabs: CampaignViewModel['floorTabs'] = []
+  const rows: FloorRow[] = []
   const images: string[] = []
 
   for (const tab of tabs) {
@@ -112,6 +126,7 @@ function floorData(selected?: unknown) {
     const panel = panels[tabId as keyof typeof panels] as
       | { rows?: unknown[][]; floorPlanImages?: string[] }
       | undefined
+    const tabRows: FloorRow[] = []
     const panelRows = Array.isArray(panel?.rows) ? panel.rows : []
     for (const r of panelRows) {
       const row = Array.isArray(r) ? r : []
@@ -120,17 +135,26 @@ function floorData(selected?: unknown) {
       const floorRange = str(row[2])
       const price = str(row[3])
       if (configuration || carpetArea || floorRange || price) {
-        rows.push({ tab: tabLabel, configuration, carpetArea, floorRange, price })
+        const entry = { tab: tabLabel, configuration, carpetArea, floorRange, price }
+        tabRows.push(entry)
+        rows.push(entry)
       }
     }
     const planImgs = Array.isArray(panel?.floorPlanImages) ? panel.floorPlanImages : []
+    const tabImages: string[] = []
     for (const src of planImgs) {
       const url = str(src)
-      if (url && !images.includes(url)) images.push(url)
+      if (url) {
+        tabImages.push(url)
+        if (!images.includes(url)) images.push(url)
+      }
+    }
+    if (tabRows.length > 0 || tabImages.length > 0) {
+      floorTabs.push({ id: tabId || tabLabel, label: tabLabel, rows: tabRows, images: tabImages })
     }
   }
 
-  return { rows, images }
+  return { floorTabs, rows, images }
 }
 
 function videoItems(selected?: unknown): { url: string; label: string }[] {
@@ -156,6 +180,32 @@ function benefitStats(selected?: unknown): { label: string; value: string }[] {
   return stats
     .map((s) => ({ label: str(s?.label), value: str(s?.value) }))
     .filter((s) => s.label || s.value)
+}
+
+function benefitItems(selected?: unknown): { title: string; description: string }[] {
+  const benefits = (selected as { benefits?: { items?: { title?: string; text?: string; heading?: string; description?: string }[] } })
+    ?.benefits
+  const items = Array.isArray(benefits?.items) ? benefits.items : []
+  return items
+    .map((item) => ({
+      title: str(item?.title) || str(item?.heading),
+      description: str(item?.text) || str(item?.description),
+    }))
+    .filter((item) => item.title || item.description)
+}
+
+function socialInfraGroups(selected?: unknown): { title: string; items: { name: string; value: string }[] }[] {
+  const groups = Array.isArray((selected as { socialInfraGroups?: { title?: string; items?: { name?: string; value?: string }[] }[] })?.socialInfraGroups)
+    ? (selected as { socialInfraGroups: { title?: string; items?: { name?: string; value?: string }[] }[] }).socialInfraGroups
+    : []
+  return groups
+    .map((group) => ({
+      title: str(group?.title),
+      items: (Array.isArray(group?.items) ? group.items : [])
+        .map((item) => ({ name: str(item?.name), value: str(item?.value) }))
+        .filter((item) => item.name || item.value),
+    }))
+    .filter((group) => group.title || group.items.length > 0)
 }
 
 function amenityIcons(raw: unknown): string[] {
@@ -187,28 +237,55 @@ function amenityItems(selected?: unknown): { name: string; icons: string[] }[] {
     .filter((a) => a.name)
 }
 
+function heroStatsFromData(
+  stats: { label: string; value: string }[],
+  facts: { key: string; value: string }[],
+): { label: string; value: string }[] {
+  if (stats.length > 0) return stats.slice(0, 5)
+
+  const preferredKeys = [
+    'Starting Price',
+    'BHK Range',
+    'Total Floors',
+    'Carpet Area',
+    'Completion Date (CBT)',
+    'Possession',
+    'Price Range',
+  ]
+  const out: { label: string; value: string }[] = []
+  for (const key of preferredKeys) {
+    const value = factValue(facts, key)
+    if (value) out.push({ label: key, value })
+    if (out.length >= 5) break
+  }
+  return out
+}
+
 export function buildCampaignViewModel(selected?: unknown): CampaignViewModel {
   const facts = overviewFacts(selected)
   const banners = bannerUrls(selected)
   const gallery = galleryImages(selected)
   const amenities = amenityItems(selected)
+  const benefits = benefitItems(selected)
   const highlights = Array.isArray((selected as { highlights?: { title?: string; description?: string }[] })?.highlights)
     ? (selected as { highlights: { title?: string; description?: string }[] }).highlights
         .map((h) => ({ title: str(h?.title), description: str(h?.description) }))
         .filter((h) => h.title || h.description)
     : []
   const stats = benefitStats(selected)
-  const { rows: floorRows, images: floorPlanImages } = floorData(selected)
+  const { floorTabs, rows: floorRows, images: floorPlanImages } = floorData(selected)
   const videos = videoItems(selected)
+  const socialGroups = socialInfraGroups(selected)
 
   const startingPrice = factValue(facts, 'Starting Price')
   const bhk = factValue(facts, 'BHK Range')
-  const possession = factValue(facts, 'Completion Date (CBT)') || factValue(facts, 'Possession')
+  const possession = factValue(facts, 'Possession') || factValue(facts, 'Completion Date (CBT)')
   const floors = factValue(facts, 'Total Floors')
   const priceRange = factValue(facts, 'Price Range')
   const regNo = str((selected as { regNo?: string })?.regNo) || factValue(facts, 'RERA Registration Number')
 
-  const showSummaryChips = Boolean(bhk || startingPrice || priceRange || possession || floors || regNo)
+  const benefitContent = benefits.length > 0 ? benefits : highlights
+  const heroStats = heroStatsFromData(stats, facts)
 
   return {
     title: str((selected as { title?: string })?.title) || 'Project',
@@ -226,19 +303,24 @@ export function buildCampaignViewModel(selected?: unknown): CampaignViewModel {
     galleryImages: gallery,
     facts,
     amenities,
+    benefits: benefitContent,
     highlights,
     benefitStats: stats,
+    heroStats,
+    floorTabs,
     floorRows,
     floorPlanImages,
+    socialInfraGroups: socialGroups,
     videos,
     showBanner: banners.length > 0,
     showGallery: gallery.length > 0,
     showFacts: facts.length > 0,
     showAmenities: amenities.length > 0,
+    showBenefits: benefitContent.length > 0,
     showHighlights: highlights.length > 0,
-    showStats: stats.length > 0,
+    showStats: heroStats.length > 0,
     showFloorPlans: floorRows.length > 0 || floorPlanImages.length > 0,
+    showLocation: socialGroups.length > 0,
     showVideos: videos.length > 0,
-    showSummaryChips,
   }
 }

@@ -5,19 +5,15 @@ export function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="hs-footer">
-      <div className="hs-container hs-footer-inner">
-        <div className="hs-footer-brand">{title}</div>
-        {address ? <p className="hs-footer-address">{address}</p> : null}
-        <p className="hs-footer-legal">
-          © {year} {title}. All rights reserved.
-          {regNo ? (
-            <>
-              {' '}
-              · MahaRERA No. {regNo}. Details available on the MahaRERA website.
-            </>
-          ) : null}
-        </p>
+    <footer className="dt-footer">
+      <div className="dt-footer-logo">{title}</div>
+      <div className="dt-footer-rera">
+        {regNo ? `RERA Registration: ${regNo}` : null}
+        {regNo && address ? ' | ' : null}
+        {address ?? null}
+      </div>
+      <div className="dt-footer-copy">
+        © {year} {title}. All rights reserved. This is not an offer or contract. Subject to RERA compliance.
       </div>
     </footer>
   )

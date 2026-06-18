@@ -1,15 +1,14 @@
 import './index.css'
 import { CampaignDataProvider } from './lib/CampaignDataContext'
 import { Nav } from './components/Nav'
-import { ProjectBanner } from './components/ProjectBanner'
-import { ProjectSummary } from './components/ProjectSummary'
-import { StatsSection } from './components/StatsSection'
-import { ProjectDetails } from './components/ProjectDetails'
+import { Hero } from './components/Hero'
+import { Overview } from './components/Overview'
+import { Benefits } from './components/Benefits'
 import { Gallery } from './components/Gallery'
-import { Amenities } from './components/Amenities'
-import { Highlights } from './components/Highlights'
 import { FloorPlans, Videos } from './components/FloorPlans'
-import { EnquiryCard, MobileEnquiryBar } from './components/EnquiryCard'
+import { Amenities } from './components/Amenities'
+import { Location } from './components/Location'
+import { EnquirySection, MobileEnquiryBar } from './components/EnquirySection'
 import { Footer } from './components/Footer'
 
 interface MicrositeAppProps {
@@ -21,26 +20,15 @@ function App(props: MicrositeAppProps) {
     <CampaignDataProvider selected={props.selected}>
       <div className="microsite-default">
         <Nav />
-        <ProjectSummary />
-        <ProjectBanner />
-
-        <div className="hs-page">
-          <div className="hs-container hs-layout">
-            <main className="hs-main">
-              <StatsSection />
-              <ProjectDetails />
-              <Gallery />
-              <FloorPlans />
-              <Amenities />
-              <Highlights />
-              <Videos />
-            </main>
-            <aside className="hs-sidebar">
-              <EnquiryCard />
-            </aside>
-          </div>
-        </div>
-
+        <Hero />
+        <Overview />
+        <Benefits />
+        <Gallery />
+        <FloorPlans />
+        <Amenities />
+        <Location />
+        <Videos />
+        <EnquirySection />
         <Footer />
         <MobileEnquiryBar />
       </div>

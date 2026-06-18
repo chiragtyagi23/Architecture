@@ -5,15 +5,16 @@ export function Gallery() {
   if (!showGallery) return null
 
   return (
-    <section className="hs-section" id="gallery">
-      <div className="hs-section-title">
-        <h2>Gallery</h2>
-      </div>
-      <div className="hs-gallery-grid">
+    <section className="dt-section dt-section--gray" id="gallery">
+      <span className="dt-eyebrow">Visual Tour</span>
+      <h2 className="dt-section-title">
+        Project <em>Gallery</em>
+      </h2>
+      <div className="dt-gallery-grid">
         {galleryImages.map((img, i) => (
-          <figure key={`${img.src}-${i}`} className="hs-gallery-figure">
+          <div key={`${img.src}-${i}`} className="dt-gallery-item">
             <img src={img.src} alt={img.alt} loading="lazy" />
-          </figure>
+          </div>
         ))}
       </div>
     </section>
